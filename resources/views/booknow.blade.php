@@ -4,123 +4,150 @@
 
 {{-- Navbar --}}
 <nav class="flex justify-between items-center px-12 py-5 bg-white border-b border-gray-100">
-    <a href="{{ route('home') }}" class="text-sm font-bold tracking-widest uppercase hover:opacity-80 transition-opacity">
-        Salon<span class="text-yellow-600 font-light">TwentyTwo</span>
-    </a>
-    <ul class="flex gap-10 list-none">
-        <li><a href="#" class="text-xs font-medium tracking-widest uppercase text-gray-500 hover:text-yellow-600 transition-colors">About</a></li>
-        <li><a href="{{ route('services.index') }}" class="text-xs font-medium tracking-widest uppercase text-gray-500 hover:text-yellow-600 transition-colors">Services</a></li>
-        <li><a href="#" class="text-xs font-medium tracking-widest uppercase text-gray-500 hover:text-yellow-600 transition-colors">Gallery</a></li>
-        <li><a href="#" class="text-xs font-medium tracking-widest uppercase text-gray-500 hover:text-yellow-600 transition-colors">Find Us</a></li>
-        <li><a href="#" class="text-xs font-medium tracking-widest uppercase text-gray-500 hover:text-yellow-600 transition-colors">Contact</a></li>
-    </ul>
-    <div class="flex gap-8 items-center">
-        <a href="#" class="text-xs font-semibold tracking-widest uppercase text-gray-400 hover:text-black transition-colors">Sign In</a>
-        <div class="flex gap-5">
-            <a href="#" class="text-xs tracking-widest uppercase text-gray-400 hover:text-yellow-600 transition-colors">Instagram</a>
-            <a href="#" class="text-xs tracking-widest uppercase text-gray-400 hover:text-yellow-600 transition-colors">Facebook</a>
-        </div>
-    </div>
+  <a href="{{ route('home') }}" class="text-base font-bold tracking-widest uppercase">
+    Salon<span class="text-yellow-600 font-light">TwentyTwo</span>
+  </a>
+  <ul class="flex gap-10 list-none">
+    <li><a href="{{ route('about') }}" class="text-sm font-medium tracking-wider uppercase text-gray-500 hover:text-yellow-600 transition-colors">About</a></li>
+    <li><a href="{{ route('services.index') }}" class="text-sm font-medium tracking-wider uppercase text-gray-500 hover:text-yellow-600 transition-colors">Services</a></li>
+    <li><a href="{{ route('gallery') }}" class="text-sm font-medium tracking-wider uppercase text-gray-500 hover:text-yellow-600 transition-colors">Gallery</a></li>
+    <li><a href="{{ route('contact') }}" class="text-sm font-medium tracking-wider uppercase text-gray-500 hover:text-yellow-600 transition-colors">Contact</a></li>
+  </ul>
+  <div class="flex gap-5 items-center">
+    <a href="#" class="text-sm tracking-wider uppercase text-gray-400 hover:text-yellow-600 transition-colors">Instagram</a>
+    <a href="#" class="text-sm tracking-wider uppercase text-gray-400 hover:text-yellow-600 transition-colors">Facebook</a>
+    <a href="#" class="text-sm font-medium tracking-wider uppercase text-gray-500 hover:text-yellow-600 transition-colors">Sign In</a>
+  </div>
 </nav>
 
 {{-- Hero Section --}}
-<section class="relative h-[45vh] bg-black overflow-hidden flex items-center justify-center text-center">
-    <img src="{{ asset('images/services.jpg') }}" class="absolute inset-0 w-full h-full object-cover opacity-50" alt="Booking Background">
-    <div class="absolute inset-0 bg-black/40"></div>
-    <div class="relative z-10">
-        <p class="text-[12px] font-bold tracking-[0.4em] uppercase text-yellow-500 mb-4">Quality hair services at friendly prices!</p>
-        <h1 class="text-7xl font-bold text-white tracking-tight">Booking</h1>
+<section style="position:relative; height:45vh; background:#000; overflow:hidden; display:flex; align-items:center; justify-content:center; text-align:center;">
+    <img src="{{ asset('images/services.jpg') }}"
+         style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center; display:block; opacity:0.4;"
+         alt="Booking Background">
+    <div style="position:absolute; inset:0; background:linear-gradient(to bottom, rgba(0,0,0,0.5), rgba(0,0,0,0.7));"></div>
+    <div style="position:relative; z-index:10; padding:0 24px;">
+        <p style="font-size:13px; font-weight:700; text-transform:uppercase; letter-spacing:0.4em; color:#eab308; margin-bottom:16px;">Master Artistry Since 2024</p>
+        <h1 style="font-size:clamp(56px,8vw,96px); font-weight:900; color:#fff; letter-spacing:-0.04em; line-height:1; margin:0;">Booking</h1>
     </div>
 </section>
 
-<section class="bg-stone-50 py-16 px-4 md:px-12">
-    <div class="max-w-[1400px] mx-auto">
-        
-   
+{{-- Main Section --}}
+<section style="background:#fafaf9; padding:64px 48px;">
+    <div style="max-width:1400px; margin:0 auto;">
+        <div style="display:grid; grid-template-columns:180px 1fr 340px; gap:32px; align-items:start;">
 
-        {{-- 3-Column Layout matching Reference image_42f6fc.png --}}
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-            
-            {{-- 1. Left Sidebar: Categories --}}
-            <div class="lg:col-span-2 flex flex-col border border-gray-200 bg-white shadow-sm">
-                <button onclick="showBookingCategory('promos')" class="category-btn active p-5 text-left text-[11px] font-bold uppercase tracking-widest border-b border-gray-100 transition-all">
-                    Salon Promos
-                </button>
-                <button onclick="showBookingCategory('hair')" class="category-btn p-5 text-left text-[11px] font-bold uppercase tracking-widest border-b border-gray-100 transition-all">
-                    Signature Cut
-                </button>
-                <button onclick="showBookingCategory('colour')" class="category-btn p-5 text-left text-[11px] font-bold uppercase tracking-widest border-b border-gray-100 transition-all">
-                    Signature Colour
-                </button>
-                <button onclick="showBookingCategory('special')" class="category-btn p-5 text-left text-[11px] font-bold uppercase tracking-widest transition-all">
-                    Special Services
-                </button>
+            {{-- 1. LEFT: Categories --}}
+            <div style="background:#fff; border:1px solid #e5e7eb; box-shadow:0 1px 3px rgba(0,0,0,0.06);">
+                <div style="padding:20px; background:#fafaf9; border-bottom:1px solid #f3f4f6;">
+                    <span style="font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:0.12em; color:#9ca3af;">Category</span>
+                </div>
+                <button onclick="showBookingCategory('promos', this)"
+                        style="width:100%; text-align:left; padding:20px; font-size:13px; font-weight:800; letter-spacing:0.08em; text-transform:uppercase; border:none; border-bottom:1px solid #f3f4f6; background:#111; color:#fff; cursor:pointer;"
+                        class="category-btn active">Salon Promos</button>
+                <button onclick="showBookingCategory('hair', this)"
+                        style="width:100%; text-align:left; padding:20px; font-size:13px; font-weight:800; letter-spacing:0.08em; text-transform:uppercase; border:none; border-bottom:1px solid #f3f4f6; background:#fff; color:#000; cursor:pointer;"
+                        class="category-btn">Signature Cut</button>
+                <button onclick="showBookingCategory('colour', this)"
+                        style="width:100%; text-align:left; padding:20px; font-size:13px; font-weight:800; letter-spacing:0.08em; text-transform:uppercase; border:none; border-bottom:1px solid #f3f4f6; background:#fff; color:#000; cursor:pointer;"
+                        class="category-btn">Signature Colour</button>
+                <button onclick="showBookingCategory('special', this)"
+                        style="width:100%; text-align:left; padding:20px; font-size:13px; font-weight:800; letter-spacing:0.08em; text-transform:uppercase; border:none; background:#fff; color:#000; cursor:pointer;"
+                        class="category-btn">Special Services</button>
             </div>
 
-            {{-- 2. Middle Column: Service Selection --}}
-            <div class="lg:col-span-6 bg-white border border-gray-200 shadow-sm">
-               
-                <div id="booking-promos" class="booking-list">
-                    {{-- Service Item --}}
-                    <label class="flex justify-between items-start p-8 border-b border-gray-100 hover:bg-stone-50 transition-all cursor-pointer">
-                        <div class="max-w-md">
-                            <h4 class="text-sm font-bold uppercase mb-2">Color + Hair Mask + Haircut</h4>
-                            <p class="text-xs text-gray-400 font-light leading-relaxed">A complete transformation including professional coloring, deep hair mask treatment, and a precision signature cut.</p>
-                        </div>
-                        <div class="text-right">
-                            <div class="flex items-center gap-4 mb-1">
-                                <span class="text-sm font-bold">₱1,500.00</span>
-                                <input type="radio" name="selected_service" class="w-5 h-5 accent-black">
-                            </div>
-                            <span class="text-[11px] text-gray-400">90 min</span>
-                        </div>
-                    </label>
+            {{-- 2. MIDDLE: Services & Providers --}}
+            <div style="display:flex; flex-direction:column; gap:40px;">
 
-                    {{-- Service Item --}}
-                    <label class="flex justify-between items-start p-8 border-b border-gray-100 hover:bg-stone-50 transition-all cursor-pointer">
-                        <div class="max-w-md">
-                            <h4 class="text-sm font-bold uppercase mb-2">Nano Plasty</h4>
-                            <p class="text-xs text-gray-400 font-light leading-relaxed">Organic straightening and restorative treatment for mirror-like shine and frizz-free hair.</p>
-                        </div>
-                        <div class="text-right">
-                            <div class="flex items-center gap-4 mb-1">
-                                <span class="text-sm font-bold">₱4,000.00</span>
-                                <input type="radio" name="selected_service" class="w-5 h-5 accent-black">
+                {{-- Service Selection --}}
+                <div style="background:#fff; border:1px solid #e5e7eb; box-shadow:0 1px 3px rgba(0,0,0,0.06);">
+                    <div style="padding:24px; border-bottom:1px solid #f3f4f6; display:flex; justify-content:space-between; align-items:center;">
+                        <h3 style="font-size:13px; font-weight:900; text-transform:uppercase; letter-spacing:0.12em; margin:0;" id="category-title">Salon Promos</h3>
+                        <span style="font-size:12px; color:#d1d5db; text-transform:uppercase; letter-spacing:0.12em; font-style:italic;">Select a treatment</span>
+                    </div>
+
+                    <div id="booking-promos" class="booking-list">
+                        <label style="display:flex; justify-content:space-between; align-items:flex-start; padding:30px; border-bottom:1px solid #f3f4f6; cursor:pointer; transition:background 0.2s;"
+                               onmouseover="this.style.background='#fafaf9'" onmouseout="this.style.background='#fff'">
+                            <div style="flex:1; padding-right:24px;">
+                                <h4 style="font-size:16px; font-weight:900; text-transform:uppercase; margin:0 0 6px; letter-spacing:-0.01em;">Makeup Artistry</h4>
+                                <p style="font-size:14px; color:#9ca3af; font-weight:300; line-height:1.6; margin:0 0 12px;">Full face glamour or natural finish for any special occasion.</p>
+                                <span style="font-size:12px; color:#d1d5db; text-transform:uppercase; letter-spacing:0.12em;">90 min</span>
                             </div>
-                            <span class="text-[11px] text-gray-400">3 hrs</span>
+                            <div style="display:flex; flex-direction:column; align-items:flex-end; gap:12px;">
+                                <span style="font-size:16px; font-weight:900;">&#8369;4,100</span>
+                                <input type="radio" name="selected_service" checked
+                                       style="width:24px; height:24px; appearance:none; border:1px solid #d1d5db; border-radius:50%; cursor:pointer; position:relative; flex-shrink:0;">
+                            </div>
+                        </label>
+                    </div>
+
+                    <div style="padding:16px; background:rgba(250,250,249,0.5); display:flex; justify-content:flex-end;">
+                        <button style="background:#000; color:#fff; font-size:13px; font-weight:700; text-transform:uppercase; letter-spacing:0.12em; padding:12px 24px; border:none; cursor:pointer; transition:background 0.2s;">
+                            + Add Another Service
+                        </button>
+                    </div>
+                </div>
+
+                {{-- Provider Selection --}}
+                <div>
+                    <h3 style="font-size:13px; font-weight:900; text-transform:uppercase; letter-spacing:0.2em; margin-bottom:16px; color:#9ca3af;">Select a Service Provider</h3>
+                    <div style="background:#fff; border:1px solid #e5e7eb; box-shadow:0 1px 3px rgba(0,0,0,0.06); overflow:hidden;">
+                        <label style="display:flex; justify-content:space-between; align-items:center; padding:20px; border-bottom:1px solid #f3f4f6; cursor:pointer; transition:background 0.2s;"
+                               onmouseover="this.style.background='#fafaf9'" onmouseout="this.style.background='#fff'">
+                            <span style="font-size:14px; font-weight:900; text-transform:uppercase;">Any Service Provider</span>
+                            <div style="display:flex; align-items:center; gap:16px;">
+                                <span style="font-size:14px; color:#9ca3af;">&#8369;4,100</span>
+                                <input type="radio" name="stylist" value="any"
+                                       style="width:24px; height:24px; appearance:none; border:1px solid #d1d5db; border-radius:50%; cursor:pointer; flex-shrink:0;">
+                            </div>
+                        </label>
+
+                        <div style="display:grid; grid-template-columns:1fr 1fr;">
+                            @php $stylists = ['Vince', 'Joy', 'Cha', 'Jm']; @endphp
+                            @foreach($stylists as $stylist)
+                            <label style="display:flex; justify-content:space-between; align-items:center; padding:20px; border-bottom:1px solid #f3f4f6; border-right:1px solid #f3f4f6; cursor:pointer; transition:background 0.2s;"
+                                   onmouseover="this.style.background='#fafaf9'" onmouseout="this.style.background='#fff'">
+                                <span style="font-size:14px; font-weight:700; text-transform:uppercase;">{{ $stylist }}</span>
+                                <div style="display:flex; align-items:center; gap:12px;">
+                                    <span style="font-size:13px; color:#9ca3af; font-style:italic;">90m</span>
+                                    <input type="radio" name="stylist" value="{{ Str::slug($stylist) }}"
+                                           style="width:24px; height:24px; appearance:none; border:1px solid #d1d5db; border-radius:50%; cursor:pointer; flex-shrink:0;">
+                                </div>
+                            </label>
+                            @endforeach
                         </div>
-                    </label>
+                    </div>
                 </div>
             </div>
 
-            {{-- 3. Right Sidebar: Salon Info (Matching image_42f6fc.png) --}}
-            <div class="lg:col-span-4 space-y-8">
-                <div class="bg-white border border-gray-200 p-6 shadow-sm">
-                    <img src="{{ asset('images/services.jpg') }}" class="w-full h-48 object-cover mb-6" alt="Salon Interior">
-                    
-                    <div class="space-y-6 text-xs uppercase tracking-widest">
-                        <div>
-                            <h5 class="font-bold text-black mb-2">Opening Times</h5>
-                            <p class="text-gray-500">Mon - Sun 10:00 AM - 10:00 PM</p>
-                        </div>
+            {{-- 3. RIGHT: Details --}}
+            <div style="display:flex; flex-direction:column; gap:24px;">
+                <div style="background:#fff; border:1px solid #e5e7eb; padding:32px; box-shadow:0 1px 3px rgba(0,0,0,0.06);">
+                    <div style="width:100%; height:192px; overflow:hidden; margin-bottom:32px;">
+                        <img src="{{ asset('images/Frontsalon.jpg') }}"
+                             style="width:100%; height:100%; object-fit:cover; object-position:center; display:block; filter:grayscale(100%);"
+                             alt="Salon">
+                    </div>
 
+                    <div style="display:flex; flex-direction:column; gap:32px;">
                         <div>
-                            <h5 class="font-bold text-black mb-2">Address</h5>
-                            <p class="text-gray-500 flex items-start gap-2">
-                                <svg class="h-3 w-3 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /></svg>
-                                Main Branch, Pasig City, Metro Manila
-                            </p>
+                            <p style="font-size:12px; font-weight:800; letter-spacing:0.15em; text-transform:uppercase; color:#9ca3af; margin-bottom:8px; border-bottom:1px solid #f3f4f6; padding-bottom:8px;">Opening Times</p>
+                            <p style="font-size:15px; font-weight:500; margin:0;">Mon - Sun 10:00 AM - 10:00 PM</p>
                         </div>
-
                         <div>
-                            <h5 class="font-bold text-black mb-2">Cancellation Policy</h5>
-                            <p class="text-gray-400 normal-case leading-relaxed">Please notify us at least 24 hours in advance if you need to cancel or reschedule your appointment.</p>
+                            <p style="font-size:12px; font-weight:800; letter-spacing:0.15em; text-transform:uppercase; color:#9ca3af; margin-bottom:8px; border-bottom:1px solid #f3f4f6; padding-bottom:8px;">Address</p>
+                            <p style="font-size:15px; color:#6b7280; line-height:1.7; margin:0;">Main Branch, Pasig City,<br>Metro Manila, Philippines</p>
+                        </div>
+                        <div>
+                            <p style="font-size:12px; font-weight:800; letter-spacing:0.15em; text-transform:uppercase; color:#9ca3af; margin-bottom:8px; border-bottom:1px solid #f3f4f6; padding-bottom:8px;">Policy</p>
+                            <p style="font-size:13px; color:#9ca3af; line-height:1.7; font-style:italic; margin:0;">Cancellation requires 24h notice. Prices may vary based on hair length and density.</p>
                         </div>
                     </div>
                 </div>
 
-                <button class="w-full bg-black text-white text-xs font-bold uppercase tracking-[0.3em] py-5 hover:bg-yellow-600 transition-all shadow-lg">
-                    Continue to Details
+                <button style="width:100%; background:#000; color:#fff; font-size:13px; font-weight:700; text-transform:uppercase; letter-spacing:0.3em; padding:24px; border:none; cursor:pointer; transition:background 0.2s; box-shadow:0 10px 40px rgba(0,0,0,0.15);">
+                    Continue to Details &rarr;
                 </button>
             </div>
 
@@ -129,16 +156,22 @@
 </section>
 
 <style>
-    .category-btn.active {
-        background-color: #1c1c1c;
-        color: white;
-    }
+    .category-btn:hover { background:#fafaf9 !important; }
+    .category-btn.active { background:#111 !important; color:#fff !important; }
+    input[type="radio"]:checked { background:#111; border-color:#111; }
 </style>
 
 <script>
-    function showBookingCategory(id) {
-        document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
-        event.currentTarget.classList.add('active');
+    function showBookingCategory(id, btn) {
+        document.querySelectorAll('.category-btn').forEach(b => {
+            b.classList.remove('active');
+            b.style.background = '#fff';
+            b.style.color = '#000';
+        });
+        btn.classList.add('active');
+        btn.style.background = '#111';
+        btn.style.color = '#fff';
+        document.getElementById('category-title').textContent = btn.innerText;
     }
 </script>
 
