@@ -16,7 +16,41 @@
   <div class="flex gap-5 items-center">
     <a href="#" class="text-sm tracking-wider uppercase text-gray-400 hover:text-yellow-600 transition-colors">Instagram</a>
     <a href="#" class="text-sm tracking-wider uppercase text-gray-400 hover:text-yellow-600 transition-colors">Facebook</a>
-    <a href="{{ route('booknow') }}" class="bg-black hover:bg-yellow-600 text-white text-sm font-semibold tracking-wider uppercase px-5 py-3 transition-colors">Book Now</a>
+
+    {{-- AUTH BUTTONS --}}
+    @if(Auth::guard('customer')->check())
+      {{-- Logged in: show name, my bookings, sign out --}}
+      <span class="text-sm text-gray-400 uppercase tracking-wider">
+        Hi, {{ Auth::guard('customer')->user()->name }}
+      </span>
+      <a href="{{ route('customer.history') }}"
+         class="text-sm font-medium tracking-wider uppercase text-gray-500 hover:text-yellow-600 transition-colors">
+        My Bookings
+      </a>
+      <form method="POST" action="{{ route('customer.logout') }}" style="display:inline;">
+        @csrf
+        <button type="submit"
+                class="text-sm font-medium tracking-wider uppercase text-gray-500 hover:text-yellow-600 transition-colors"
+                style="background:none; border:none; cursor:pointer; padding:0;">
+          Sign Out
+        </button>
+      </form>
+    @else
+      {{-- Guest: show login + register --}}
+      <a href="{{ route('customer.login') }}"
+         class="text-sm font-medium tracking-wider uppercase text-gray-500 hover:text-yellow-600 transition-colors">
+        Sign In
+      </a>
+      <a href="{{ route('customer.register') }}"
+         class="bg-black hover:bg-yellow-600 text-white text-sm font-semibold tracking-wider uppercase px-5 py-3 transition-colors">
+        Register
+      </a>
+    @endif
+
+    <a href="{{ route('booknow') }}"
+       class="bg-yellow-600 hover:bg-yellow-700 text-white text-sm font-semibold tracking-wider uppercase px-5 py-3 transition-colors">
+      Book Now
+    </a>
   </div>
 </nav>
 
