@@ -14,11 +14,16 @@ class Customer extends Authenticatable
         'contact_num',
         'email',
         'password',
+        'active',
     ];
 
     protected $hidden = [
         'password',
         'remember_token',
+    ];
+
+    protected $casts = [
+        'active' => 'boolean',
     ];
 
     public function appointments()

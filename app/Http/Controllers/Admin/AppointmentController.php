@@ -11,9 +11,15 @@ use Illuminate\Http\Request;
 
 class AppointmentController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $appointments = Appointment::with(['customer', 'stylist', 'services'])->paginate(10);
+        $query = Appointment::with(['customer', 'stylist', 'services']);
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        $appointments = $query->paginate(10)->withQueryString();
         return view('admin.appointments.index', compact('appointments'));
     }
 
@@ -32,7 +38,7 @@ class AppointmentController extends Controller
             'customer_id' => 'required|exists:customers,id',
             'stylist_id' => 'required|exists:stylists,id',
             'appointment_datetime' => 'required|date',
-            'status' => 'required|in:pending,confirmed,done,cancelled',
+            'status' => 'required|in:pending,done,cancelled',
             'downpayment_amount' => 'required|numeric|min:0',
             'service_ids' => 'required|array',
             'service_ids.*' => 'exists:services,id',
@@ -67,7 +73,7 @@ class AppointmentController extends Controller
             'customer_id' => 'required|exists:customers,id',
             'stylist_id' => 'required|exists:stylists,id',
             'appointment_datetime' => 'required|date',
-            'status' => 'required|in:pending,confirmed,done,cancelled',
+            'status' => 'required|in:pending,done,cancelled',
             'downpayment_amount' => 'required|numeric|min:0',
             'service_ids' => 'required|array',
             'service_ids.*' => 'exists:services,id',
@@ -89,15 +95,9 @@ class AppointmentController extends Controller
     public function destroy(Appointment $appointment)
     {
         $appointment->services()->detach();
-        $appointment->delete();
+        Appointment::destroy($appointment->id);
 
         return redirect()->route('admin.appointments.index')->with('success', 'Appointment deleted.');
-    }
-
-    public function confirm(Appointment $appointment)
-    {
-        $appointment->update(['status' => 'confirmed']);
-        return redirect()->route('admin.appointments.index')->with('success', 'Appointment confirmed.');
     }
 
     public function cancel(Appointment $appointment)

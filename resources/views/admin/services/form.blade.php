@@ -14,12 +14,20 @@
     <textarea name="description" rows="4" class="w-full rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 outline-none focus:border-slate-900">{{ old('description', $service->description ?? '') }}</textarea>
   </div>
 
-  <div class="flex items-center gap-3">
-    <input id="is_promo" type="checkbox" name="is_promo" value="1" {{ old('is_promo', $service->is_promo ?? false) ? 'checked' : '' }} class="h-4 w-4 rounded border-slate-300 text-slate-900 focus:ring-slate-900" />
-    <label for="is_promo" class="text-sm text-slate-700">Promo bundle</label>
-  </div>
+  @if(isset($isPromoTab) && $isPromoTab)
+    <input type="hidden" name="is_promo" value="1" />
+    <div class="rounded-2xl border border-emerald-200 bg-emerald-50 p-4">
+      <p class="text-sm font-semibold text-slate-900">Promo bundle</p>
+      <p class="text-sm text-slate-600">This promo will be saved as a bundle. You can select one or more services below.</p>
+    </div>
+  @else
+    <div class="flex items-center gap-3">
+      <input id="is_promo" type="checkbox" name="is_promo" value="1" {{ old('is_promo', isset($isPromoTab) && $isPromoTab ? true : ($service->is_promo ?? false)) ? 'checked' : '' }} class="h-4 w-4 rounded border-slate-300 text-slate-900 focus:ring-slate-900" />
+      <label for="is_promo" class="text-sm text-slate-700">Promo bundle</label>
+    </div>
+  @endif
 
-  <div id="promo-components" class="{{ old('is_promo', $service->is_promo ?? false) ? '' : 'hidden' }} space-y-3 rounded-2xl border border-emerald-200 bg-emerald-50 p-4">
+  <div id="promo-components" class="{{ old('is_promo', isset($isPromoTab) && $isPromoTab ? true : ($service->is_promo ?? false)) ? '' : 'hidden' }} space-y-3 rounded-2xl border border-emerald-200 bg-emerald-50 p-4">
     <p class="text-sm font-semibold text-slate-900">Promo components</p>
     <p class="text-sm text-slate-600">Choose the services included in this promo bundle.</p>
     <div class="grid gap-2 sm:grid-cols-2">
@@ -57,6 +65,6 @@
     }
 
     promoCheckbox.addEventListener('change', togglePromoSection);
-    togglePromoSection();
+    togglePromoSection(); // Check on page load
   });
 </script>

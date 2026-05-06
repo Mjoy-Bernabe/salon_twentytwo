@@ -1,6 +1,7 @@
 <?php
 
 namespace Database\Seeders;
+use Database\Seeders\AppointmentSeeder;
 use Database\Seeders\StylistSeeder;
 
 use App\Models\User;
@@ -17,15 +18,17 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-User::firstOrCreate(
-    ['email' => 'test@example.com'], // check
-    [
-        'name' => 'Test User',
-        'password' => bcrypt('password'), // required if not using factory
-    ]
-);
+        User::firstOrCreate(
+            ['email' => 'test@example.com'],
+            [
+                'name' => 'Test User',
+                'password' => bcrypt('password'),
+            ]
+        );
+
         $this->call(AdminSeeder::class);
         $this->call(ServiceSeeder::class);
         $this->call(StylistSeeder::class);
+        $this->call(AppointmentSeeder::class);
     }
 }

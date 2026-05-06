@@ -27,15 +27,19 @@ class ServiceController extends Controller
         return view('admin.services.index', compact('services', 'serviceNames', 'tab'));
     }
 
-    public function create()
+    public function create(Request $request)
     {
         $stylists = Stylist::all();
         $baseServices = Service::where('is_promo', false)->orderBy('service_name')->get();
-        return view('admin.services.create', compact('stylists', 'baseServices'));
+        $isPromoTab = $request->query('tab') === 'promo';
+
+        return view('admin.services.create', compact('stylists', 'baseServices', 'isPromoTab'));
     }
 
     public function store(Request $request)
     {
+        $isPromo = $request->boolean('is_promo');
+
         $data = $request->validate([
             'service_name' => 'required|string|max:100',
             'price' => 'required|numeric',
@@ -43,8 +47,8 @@ class ServiceController extends Controller
             'is_promo' => 'nullable|boolean',
             'stylist_ids' => 'nullable|array',
             'stylist_ids.*' => 'exists:stylists,id',
-            'component_service_ids' => ['nullable', 'array'],
-            'component_service_ids.*' => ['nullable', Rule::exists('services', 'id')->where('is_promo', false)],
+            'component_service_ids' => $isPromo ? 'required|array|min:1' : 'nullable|array',
+            'component_service_ids.*' => Rule::exists('services', 'id')->where('is_promo', false),
         ]);
 
         $service = Service::create([
@@ -72,6 +76,8 @@ class ServiceController extends Controller
 
     public function update(Request $request, Service $service)
     {
+        $isPromo = $request->boolean('is_promo');
+
         $data = $request->validate([
             'service_name' => 'required|string|max:100',
             'price' => 'required|numeric',
@@ -79,8 +85,8 @@ class ServiceController extends Controller
             'is_promo' => 'nullable|boolean',
             'stylist_ids' => 'nullable|array',
             'stylist_ids.*' => 'exists:stylists,id',
-            'component_service_ids' => ['nullable', 'array'],
-            'component_service_ids.*' => ['nullable', Rule::exists('services', 'id')->where('is_promo', false)],
+            'component_service_ids' => $isPromo ? 'required|array|min:1' : 'nullable|array',
+            'component_service_ids.*' => Rule::exists('services', 'id')->where('is_promo', false),
         ]);
 
         $service->update([

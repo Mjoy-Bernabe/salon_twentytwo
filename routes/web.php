@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\AdminController as AdminDashboardController;
 use App\Http\Controllers\Admin\ServiceController as AdminServiceController;
 use App\Http\Controllers\Admin\StylistController as AdminStylistController;
 use App\Http\Controllers\Admin\AppointmentController as AdminAppointmentController;
+use App\Http\Controllers\Admin\CustomerController as AdminCustomerController;
 
 /*
 |--------------------------------------------------------------------------
@@ -85,7 +86,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('stylists/{id}/schedule', [AdminStylistController::class, 'storeSchedule'])->name('stylists.schedule.store');
 
         Route::resource('appointments', AdminAppointmentController::class);
-        Route::post('appointments/{appointment}/confirm', [AdminAppointmentController::class, 'confirm'])->name('appointments.confirm');
+        Route::resource('customers', AdminCustomerController::class)->only(['index', 'show', 'edit', 'update']);
+        Route::patch('customers/{customer}/toggle-active', [AdminCustomerController::class, 'toggleActive'])->name('customers.toggle-active');
         Route::post('appointments/{appointment}/cancel', [AdminAppointmentController::class, 'cancel'])->name('appointments.cancel');
         Route::post('appointments/{appointment}/done', [AdminAppointmentController::class, 'markDone'])->name('appointments.done');
     });
