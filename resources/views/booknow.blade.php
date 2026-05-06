@@ -35,23 +35,36 @@
 {{-- Main Section --}}
 <section style="background:#fafaf9; padding:64px 48px;">
     <div style="max-width:1400px; margin:0 auto;">
-        <div style="display:grid; grid-template-columns:180px 1fr 340px; gap:32px; align-items:start;">
+        @if(session('success'))
+            <div style="background:#ecfdf5; color:#047857; border:1px solid #a7f3d0; padding:16px 20px; margin-bottom:24px; font-size:14px; font-weight:700;">
+                {{ session('success') }}
+            </div>
+        @endif
+
+        @if($errors->any())
+            <div style="background:#fef2f2; color:#b91c1c; border:1px solid #fecaca; padding:16px 20px; margin-bottom:24px; font-size:14px; font-weight:700;">
+                {{ $errors->first() }}
+            </div>
+        @endif
+
+        <form method="POST" action="{{ route('appointments.store') }}" style="display:grid; grid-template-columns:180px 1fr 340px; gap:32px; align-items:start;">
+            @csrf
 
             {{-- 1. LEFT: Categories --}}
             <div style="background:#fff; border:1px solid #e5e7eb; box-shadow:0 1px 3px rgba(0,0,0,0.06);">
                 <div style="padding:20px; background:#fafaf9; border-bottom:1px solid #f3f4f6;">
                     <span style="font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:0.12em; color:#9ca3af;">Category</span>
                 </div>
-                <button onclick="showBookingCategory('promos', this)"
+                <button type="button" onclick="showBookingCategory('promos', this)"
                         style="width:100%; text-align:left; padding:20px; font-size:13px; font-weight:800; letter-spacing:0.08em; text-transform:uppercase; border:none; border-bottom:1px solid #f3f4f6; background:#111; color:#fff; cursor:pointer;"
                         class="category-btn active">Salon Promos</button>
-                <button onclick="showBookingCategory('hair', this)"
+                <button type="button" onclick="showBookingCategory('hair', this)"
                         style="width:100%; text-align:left; padding:20px; font-size:13px; font-weight:800; letter-spacing:0.08em; text-transform:uppercase; border:none; border-bottom:1px solid #f3f4f6; background:#fff; color:#000; cursor:pointer;"
                         class="category-btn">Signature Cut</button>
-                <button onclick="showBookingCategory('colour', this)"
+                <button type="button" onclick="showBookingCategory('colour', this)"
                         style="width:100%; text-align:left; padding:20px; font-size:13px; font-weight:800; letter-spacing:0.08em; text-transform:uppercase; border:none; border-bottom:1px solid #f3f4f6; background:#fff; color:#000; cursor:pointer;"
                         class="category-btn">Signature Colour</button>
-                <button onclick="showBookingCategory('special', this)"
+                <button type="button" onclick="showBookingCategory('special', this)"
                         style="width:100%; text-align:left; padding:20px; font-size:13px; font-weight:800; letter-spacing:0.08em; text-transform:uppercase; border:none; background:#fff; color:#000; cursor:pointer;"
                         class="category-btn">Special Services</button>
             </div>
@@ -66,24 +79,32 @@
                         <span style="font-size:12px; color:#d1d5db; text-transform:uppercase; letter-spacing:0.12em; font-style:italic;">Select a treatment</span>
                     </div>
 
-                    <div id="booking-promos" class="booking-list">
+                    @foreach($serviceGroups as $group => $services)
+                    <div id="booking-{{ $group }}" class="booking-list" style="{{ $group === 'promos' ? '' : 'display:none;' }}">
+                        @forelse($services as $service)
                         <label style="display:flex; justify-content:space-between; align-items:flex-start; padding:30px; border-bottom:1px solid #f3f4f6; cursor:pointer; transition:background 0.2s;"
                                onmouseover="this.style.background='#fafaf9'" onmouseout="this.style.background='#fff'">
                             <div style="flex:1; padding-right:24px;">
-                                <h4 style="font-size:16px; font-weight:900; text-transform:uppercase; margin:0 0 6px; letter-spacing:-0.01em;">Makeup Artistry</h4>
-                                <p style="font-size:14px; color:#9ca3af; font-weight:300; line-height:1.6; margin:0 0 12px;">Full face glamour or natural finish for any special occasion.</p>
+                                <h4 style="font-size:16px; font-weight:900; text-transform:uppercase; margin:0 0 6px; letter-spacing:-0.01em;">{{ $service->service_name }}</h4>
+                                <p style="font-size:14px; color:#9ca3af; font-weight:300; line-height:1.6; margin:0 0 12px;">{{ $service->description ?? 'Professional salon service tailored for you.' }}</p>
                                 <span style="font-size:12px; color:#d1d5db; text-transform:uppercase; letter-spacing:0.12em;">90 min</span>
                             </div>
                             <div style="display:flex; flex-direction:column; align-items:flex-end; gap:12px;">
-                                <span style="font-size:16px; font-weight:900;">&#8369;4,100</span>
-                                <input type="radio" name="selected_service" checked
+                                <span style="font-size:16px; font-weight:900;">&#8369;{{ number_format($service->price, 0) }}</span>
+                                <input type="radio" name="service_id" value="{{ $service->id }}" @checked(old('service_id') == $service->id)
                                        style="width:24px; height:24px; appearance:none; border:1px solid #d1d5db; border-radius:50%; cursor:pointer; position:relative; flex-shrink:0;">
                             </div>
                         </label>
+                        @empty
+                        <div style="padding:30px; color:#9ca3af; font-size:14px;">
+                            No services found in this tab.
+                        </div>
+                        @endforelse
                     </div>
+                    @endforeach
 
                     <div style="padding:16px; background:rgba(250,250,249,0.5); display:flex; justify-content:flex-end;">
-                        <button style="background:#000; color:#fff; font-size:13px; font-weight:700; text-transform:uppercase; letter-spacing:0.12em; padding:12px 24px; border:none; cursor:pointer; transition:background 0.2s;">
+                        <button type="button" style="background:#000; color:#fff; font-size:13px; font-weight:700; text-transform:uppercase; letter-spacing:0.12em; padding:12px 24px; border:none; cursor:pointer; transition:background 0.2s;">
                             + Add Another Service
                         </button>
                     </div>
@@ -97,21 +118,20 @@
                                onmouseover="this.style.background='#fafaf9'" onmouseout="this.style.background='#fff'">
                             <span style="font-size:14px; font-weight:900; text-transform:uppercase;">Any Service Provider</span>
                             <div style="display:flex; align-items:center; gap:16px;">
-                                <span style="font-size:14px; color:#9ca3af;">&#8369;4,100</span>
-                                <input type="radio" name="stylist" value="any"
+                                <span style="font-size:14px; color:#9ca3af;">Auto assign</span>
+                                <input type="radio" name="stylist_id" value="{{ optional($stylists->first())->id }}" @checked(!old('stylist_id')) @disabled($stylists->isEmpty())
                                        style="width:24px; height:24px; appearance:none; border:1px solid #d1d5db; border-radius:50%; cursor:pointer; flex-shrink:0;">
                             </div>
                         </label>
 
                         <div style="display:grid; grid-template-columns:1fr 1fr;">
-                            @php $stylists = ['Vince', 'Joy', 'Cha', 'Jm']; @endphp
                             @foreach($stylists as $stylist)
                             <label style="display:flex; justify-content:space-between; align-items:center; padding:20px; border-bottom:1px solid #f3f4f6; border-right:1px solid #f3f4f6; cursor:pointer; transition:background 0.2s;"
                                    onmouseover="this.style.background='#fafaf9'" onmouseout="this.style.background='#fff'">
-                                <span style="font-size:14px; font-weight:700; text-transform:uppercase;">{{ $stylist }}</span>
+                                <span style="font-size:14px; font-weight:700; text-transform:uppercase;">{{ $stylist->name }}</span>
                                 <div style="display:flex; align-items:center; gap:12px;">
                                     <span style="font-size:13px; color:#9ca3af; font-style:italic;">90m</span>
-                                    <input type="radio" name="stylist" value="{{ Str::slug($stylist) }}"
+                                    <input type="radio" name="stylist_id" value="{{ $stylist->id }}" @checked(old('stylist_id') == $stylist->id)
                                            style="width:24px; height:24px; appearance:none; border:1px solid #d1d5db; border-radius:50%; cursor:pointer; flex-shrink:0;">
                                 </div>
                             </label>
@@ -146,12 +166,12 @@
                     </div>
                 </div>
 
-                <button style="width:100%; background:#000; color:#fff; font-size:13px; font-weight:700; text-transform:uppercase; letter-spacing:0.3em; padding:24px; border:none; cursor:pointer; transition:background 0.2s; box-shadow:0 10px 40px rgba(0,0,0,0.15);">
+                <button type="submit" style="width:100%; background:#000; color:#fff; font-size:13px; font-weight:700; text-transform:uppercase; letter-spacing:0.3em; padding:24px; border:none; cursor:pointer; transition:background 0.2s; box-shadow:0 10px 40px rgba(0,0,0,0.15);">
                     Continue to Details &rarr;
                 </button>
             </div>
 
-        </div>
+        </form>
     </div>
 </section>
 
@@ -168,10 +188,22 @@
             b.style.background = '#fff';
             b.style.color = '#000';
         });
+        document.querySelectorAll('.booking-list').forEach(list => {
+            list.style.display = 'none';
+        });
+
         btn.classList.add('active');
         btn.style.background = '#111';
         btn.style.color = '#fff';
         document.getElementById('category-title').textContent = btn.innerText;
+
+        const activeList = document.getElementById('booking-' + id);
+        activeList.style.display = 'block';
+
+        const firstService = activeList.querySelector('input[name="service_id"]');
+        if (firstService) {
+            firstService.checked = true;
+        }
     }
 </script>
 

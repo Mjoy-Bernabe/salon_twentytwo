@@ -10,7 +10,7 @@ class ServiceController extends Controller
     public function index()
     {
         $services = Service::all();
-        return view('services.index', compact('services'));
+        return view('services', compact('services'));
     }
 
     public function create()
@@ -34,7 +34,7 @@ class ServiceController extends Controller
             'is_promo'     => $request->boolean('is_promo'),
         ]);
 
-        return redirect()->route('services.index')->with('success', 'Service created successfully.');
+        return redirect()->route('services')->with('success', 'Service created successfully.');
     }
 
     public function edit(Service $service)
@@ -58,13 +58,13 @@ class ServiceController extends Controller
             'is_promo'     => $request->boolean('is_promo'),
         ]);
 
-        return redirect()->route('services.index')->with('success', 'Service updated successfully.');
+        return redirect()->route('services')->with('success', 'Service updated successfully.');
     }
 
     public function destroy(Service $service)
     {
         $service->delete();
-        return redirect()->route('services.index')->with('success', 'Service deleted.');
+        return redirect()->route('services')->with('success', 'Service deleted.');
     }
 
     public function show(Service $service)
