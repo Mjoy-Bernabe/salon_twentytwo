@@ -1,8 +1,10 @@
 <?php
 
 namespace Database\Seeders;
+use Database\Seeders\StylistSeeder;
 
 use App\Models\User;
+use Database\Seeders\AdminSeeder;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -15,9 +17,15 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+User::firstOrCreate(
+    ['email' => 'test@example.com'], // check
+    [
+        'name' => 'Test User',
+        'password' => bcrypt('password'), // required if not using factory
+    ]
+);
+        $this->call(AdminSeeder::class);
+        $this->call(ServiceSeeder::class);
+        $this->call(StylistSeeder::class);
     }
 }

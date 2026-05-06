@@ -7,6 +7,11 @@ use App\Http\Controllers\StylistController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\CustomerAuthController;
+use App\Http\Controllers\Admin\AdminAuthController;
+use App\Http\Controllers\Admin\AdminController as AdminDashboardController;
+use App\Http\Controllers\Admin\ServiceController as AdminServiceController;
+use App\Http\Controllers\Admin\StylistController as AdminStylistController;
+use App\Http\Controllers\Admin\AppointmentController as AdminAppointmentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -65,13 +70,23 @@ Route::post('/stylists/{id}/schedule', [StylistController::class, 'storeSchedule
 */
 Route::resource('customers', CustomerController::class);
 
-/*
-|--------------------------------------------------------------------------
-| Appointments (Admin)
-|--------------------------------------------------------------------------
-*/
-Route::resource('appointments', AppointmentController::class);
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::get('/login', [AdminAuthController::class, 'showLogin'])->name('login');
+    Route::post('/login', [AdminAuthController::class, 'login'])->name('login.post');
+    Route::post('/logout', [AdminAuthController::class, 'logout'])->name('logout');
 
-Route::post('/appointments/{id}/confirm', [AppointmentController::class, 'confirm'])->name('appointments.confirm');
-Route::post('/appointments/{id}/cancel',  [AppointmentController::class, 'cancel'])->name('appointments.cancel');
-Route::post('/appointments/{id}/done',    [AppointmentController::class, 'markDone'])->name('appointments.done');
+    Route::middleware('admin.auth')->group(function () {
+        Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
+
+        Route::resource('services', AdminServiceController::class);
+
+        Route::resource('stylists', AdminStylistController::class);
+        Route::get('stylists/{id}/schedule', [AdminStylistController::class, 'schedule'])->name('stylists.schedule');
+        Route::post('stylists/{id}/schedule', [AdminStylistController::class, 'storeSchedule'])->name('stylists.schedule.store');
+
+        Route::resource('appointments', AdminAppointmentController::class);
+        Route::post('appointments/{appointment}/confirm', [AdminAppointmentController::class, 'confirm'])->name('appointments.confirm');
+        Route::post('appointments/{appointment}/cancel', [AdminAppointmentController::class, 'cancel'])->name('appointments.cancel');
+        Route::post('appointments/{appointment}/done', [AdminAppointmentController::class, 'markDone'])->name('appointments.done');
+    });
+});

@@ -41,9 +41,14 @@ return [
         'provider' => 'users',
     ],
 
-    'customer' => [          // ADD THIS
+    'customer' => [
         'driver'   => 'session',
         'provider' => 'customers',
+    ],
+
+    'admin' => [
+        'driver'   => 'session',
+        'provider' => 'admins',
     ],
 ],
 
@@ -73,9 +78,14 @@ return [
         'model'  => App\Models\User::class,
     ],
 
-    'customers' => [         // ADD THIS
+    'customers' => [
         'driver' => 'eloquent',
         'model'  => App\Models\Customer::class,
+    ],
+
+    'admins' => [
+        'driver' => 'eloquent',
+        'model'  => App\Models\Admin::class,
     ],
 ],
 

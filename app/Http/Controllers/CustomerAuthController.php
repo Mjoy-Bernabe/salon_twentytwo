@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Customer;
+use App\Models\Admin;
 use App\Models\Appointment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -52,6 +53,13 @@ class CustomerAuthController extends Controller
 
         $credentials = $request->only('email', 'password');
 
+        // Check admin credentials first
+        if (Auth::guard('admin')->attempt($credentials, $request->boolean('remember'))) {
+            $request->session()->regenerate();
+            return redirect()->route('admin.dashboard')->with('success', 'Welcome back, Admin!');
+        }
+
+        // Then check customer credentials
         if (Auth::guard('customer')->attempt($credentials, $request->boolean('remember'))) {
             $request->session()->regenerate();
             return redirect()->route('booking')->with('success', 'Welcome back, ' . Auth::guard('customer')->user()->name . '!');

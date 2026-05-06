@@ -1,0 +1,3 @@
+- i am developing a backend and logic for accessing the admin page
+- make use of the logo i am using, the of the busoiness is SALON TWENTYTWO
+- 
