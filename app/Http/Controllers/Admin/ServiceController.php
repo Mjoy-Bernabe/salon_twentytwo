@@ -64,8 +64,8 @@ class ServiceController extends Controller
     {
         $stylists = Stylist::all();
         $baseServices = Service::where('is_promo', false)->orderBy('service_name')->get();
-        $selectedStylists = $service->stylists()->pluck('id')->toArray();
-        $selectedComponents = $service->components()->pluck('id')->toArray();
+        $selectedStylists = $service->stylists()->pluck('stylists.id')->toArray();
+        $selectedComponents = $service->components()->pluck('services.id')->toArray();
 
         return view('admin.services.edit', compact('service', 'stylists', 'selectedStylists', 'baseServices', 'selectedComponents'));
     }

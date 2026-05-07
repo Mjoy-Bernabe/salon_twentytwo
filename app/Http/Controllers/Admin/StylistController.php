@@ -37,7 +37,7 @@ class StylistController extends Controller
     public function edit(Stylist $stylist)
     {
         $services = Service::all();
-        $selectedServices = $stylist->services()->pluck('id')->toArray();
+        $selectedServices = $stylist->services()->pluck('services.id')->toArray();
 
         return view('admin.stylists.edit', compact('stylist', 'services', 'selectedServices'));
     }

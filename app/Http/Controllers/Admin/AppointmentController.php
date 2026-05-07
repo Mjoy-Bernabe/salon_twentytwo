@@ -8,6 +8,8 @@ use App\Models\Customer;
 use App\Models\Service;
 use App\Models\Stylist;
 use Illuminate\Http\Request;
+use App\Mail\AppointmentConfirmed;
+use Illuminate\Support\Facades\Mail;
 
 class AppointmentController extends Controller
 {
@@ -56,7 +58,7 @@ class AppointmentController extends Controller
         $customers = Customer::all();
         $stylists = Stylist::all();
         $services = Service::all();
-        $selectedServices = $appointment->services()->pluck('id')->toArray();
+        $selectedServices = $appointment->services()->pluck('services.id')->toArray();
 
         return view('admin.appointments.edit', compact('appointment', 'customers', 'stylists', 'services', 'selectedServices'));
     }
@@ -97,7 +99,14 @@ class AppointmentController extends Controller
     public function confirm(Appointment $appointment)
     {
         $appointment->update(['status' => 'confirmed']);
-        return redirect()->route('admin.appointments.index')->with('success', 'Appointment confirmed.');
+
+        // Load relationships needed for the email
+        $appointment->load(['customer', 'stylist', 'services']);
+
+        Mail::to($appointment->customer->email)
+            ->send(new AppointmentConfirmed($appointment));
+
+        return redirect()->route('admin.appointments.index')->with('success', 'Appointment confirmed and email sent.');
     }
 
     public function cancel(Appointment $appointment)

@@ -43,6 +43,8 @@ Route::middleware('customer.auth')->group(function () {
     Route::get('/booking',        [AppointmentController::class, 'index'])->name('booking');
     Route::get('/booknow',        [AppointmentController::class, 'index'])->name('booknow');
     Route::post('/appointments',  [AppointmentController::class, 'store'])->name('appointments.store');
+    Route::get('/appointments/stylists', [AppointmentController::class, 'getStylistsForService'])->name('appointments.stylists');
+    Route::get('/appointments/schedules', [AppointmentController::class, 'getSchedulesForStylist'])->name('appointments.schedules');
     Route::get('/my-bookings',    [CustomerAuthController::class, 'history'])->name('customer.history');
 });
 
