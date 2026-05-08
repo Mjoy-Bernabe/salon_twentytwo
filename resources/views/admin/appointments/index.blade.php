@@ -13,6 +13,21 @@
 
   @include('admin.partials.alerts')
 
+  <div class="mb-6 rounded-[28px] bg-white p-6 shadow-sm">
+    <form method="GET" action="{{ route('admin.appointments.index') }}" id="appointment-filter-form" class="flex gap-4">
+      <div class="flex-1">
+        <label class="mb-2 block text-sm font-medium text-slate-700">Filter by Status</label>
+        <select name="status" onchange="document.getElementById('appointment-filter-form').submit()" class="w-full rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 outline-none focus:border-slate-900">
+          <option value="">All Appointments</option>
+          <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>Pending</option>
+          <option value="confirmed" {{ request('status') === 'confirmed' ? 'selected' : '' }}>Confirmed</option>
+          <option value="done" {{ request('status') === 'done' ? 'selected' : '' }}>Done</option>
+          <option value="cancelled" {{ request('status') === 'cancelled' ? 'selected' : '' }}>Cancelled</option>
+        </select>
+      </div>
+    </form>
+  </div>
+
   <div class="overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-sm">
     <table class="min-w-full divide-y divide-slate-200 text-left text-sm">
       <thead class="bg-slate-50">
@@ -35,18 +50,24 @@
             <td class="px-6 py-4">{{ ucfirst($appointment->status) }}</td>
             <td class="px-6 py-4 space-x-2">
               <a href="{{ route('admin.appointments.edit', $appointment) }}" class="rounded-full bg-slate-900 px-3 py-2 text-xs text-white hover:bg-slate-700">Edit</a>
-              <form action="{{ route('admin.appointments.confirm', $appointment) }}" method="POST" class="inline-block">
-                @csrf
-                <button type="submit" class="rounded-full bg-emerald-500 px-3 py-2 text-xs text-white hover:bg-emerald-600">Confirm</button>
-              </form>
-              <form action="{{ route('admin.appointments.done', $appointment) }}" method="POST" class="inline-block">
-                @csrf
-                <button type="submit" class="rounded-full bg-blue-500 px-3 py-2 text-xs text-white hover:bg-blue-600">Done</button>
-              </form>
-              <form action="{{ route('admin.appointments.cancel', $appointment) }}" method="POST" class="inline-block">
-                @csrf
-                <button type="submit" class="rounded-full bg-rose-500 px-3 py-2 text-xs text-white hover:bg-rose-600">Cancel</button>
-              </form>
+              @if($appointment->status !== 'done' && $appointment->status !== 'cancelled')
+                <form action="{{ route('admin.appointments.confirm', $appointment) }}" method="POST" class="inline-block">
+                  @csrf
+                  <button type="submit" class="rounded-full bg-emerald-500 px-3 py-2 text-xs text-white hover:bg-emerald-600">Confirm</button>
+                </form>
+                <form action="{{ route('admin.appointments.cancel', $appointment) }}" method="POST" class="inline-block">
+                  @csrf
+                  <button type="submit" class="rounded-full bg-rose-500 px-3 py-2 text-xs text-white hover:bg-rose-600">Cancel</button>
+                </form>
+              @endif
+              @if($appointment->status !== 'done' && $appointment->status !== 'cancelled')
+                <form action="{{ route('admin.appointments.done', $appointment) }}" method="POST" class="inline-block">
+                  @csrf
+                  <button type="submit" class="rounded-full bg-blue-500 px-3 py-2 text-xs text-white hover:bg-blue-600">Done</button>
+                </form>
+              @else
+                <span class="inline-block rounded-full {{ $appointment->status === 'done' ? 'bg-blue-100 text-blue-700' : 'bg-rose-100 text-rose-700' }} px-3 py-2 text-xs font-semibold">{{ ucfirst($appointment->status) }}</span>
+              @endif
             </td>
           </tr>
         @endforeach

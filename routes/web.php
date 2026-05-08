@@ -82,9 +82,15 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         Route::resource('services', AdminServiceController::class);
 
+        Route::resource('customers', \App\Http\Controllers\Admin\CustomerController::class);
+        Route::post('customers/{customer}/toggle-active', [\App\Http\Controllers\Admin\CustomerController::class, 'toggleActive'])->name('customers.toggle-active');
+
         Route::resource('stylists', AdminStylistController::class);
         Route::get('stylists/{id}/schedule', [AdminStylistController::class, 'schedule'])->name('stylists.schedule');
         Route::post('stylists/{id}/schedule', [AdminStylistController::class, 'storeSchedule'])->name('stylists.schedule.store');
+        Route::get('stylists-schedule/{id}/edit', [AdminStylistController::class, 'editSchedule'])->name('stylists-schedule.edit');
+        Route::post('stylists-schedule/{id}', [AdminStylistController::class, 'updateSchedule'])->name('stylists-schedule.update');
+        Route::delete('stylists-schedule/{id}', [AdminStylistController::class, 'deleteSchedule'])->name('stylists-schedule.delete');
 
         Route::resource('appointments', AdminAppointmentController::class);
         Route::post('appointments/{appointment}/confirm', [AdminAppointmentController::class, 'confirm'])->name('appointments.confirm');

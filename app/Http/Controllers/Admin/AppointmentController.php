@@ -15,7 +15,13 @@ class AppointmentController extends Controller
 {
     public function index()
     {
-        $appointments = Appointment::with(['customer', 'stylist', 'services'])->paginate(10);
+        $query = Appointment::with(['customer', 'stylist', 'services']);
+
+        if (request()->has('status') && request()->status !== '') {
+            $query->where('status', request()->status);
+        }
+
+        $appointments = $query->paginate(10);
         return view('admin.appointments.index', compact('appointments'));
     }
 
