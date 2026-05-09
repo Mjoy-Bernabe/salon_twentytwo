@@ -17,7 +17,15 @@ class CustomerController extends Controller
             $query->where('is_active', $isActive);
         }
 
-        $customers = $query->paginate(10);
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', '%' . $search . '%')
+                    ->orWhere('email', 'like', '%' . $search . '%');
+            });
+        }
+
+        $customers = $query->paginate(10)->withQueryString();
         
         return view('admin.customers.index', compact('customers'));
     }

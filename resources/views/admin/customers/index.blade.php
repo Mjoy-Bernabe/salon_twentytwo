@@ -13,14 +13,22 @@
   @include('admin.partials.alerts')
 
   <div class="mb-6 rounded-[28px] bg-white p-6 shadow-sm">
-    <form method="GET" action="{{ route('admin.customers.index') }}" id="filter-form" class="flex gap-4">
-      <div class="flex-1">
+    <form method="GET" action="{{ route('admin.customers.index') }}" id="filter-form" class="grid gap-4 md:grid-cols-2">
+      <div>
+        <label class="mb-2 block text-sm font-medium text-slate-700">Search by Name or Email</label>
+        <input type="text" name="search" value="{{ request('search') }}" placeholder="Enter customer name or email" class="w-full rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 outline-none focus:border-slate-900" />
+      </div>
+      <div>
         <label class="mb-2 block text-sm font-medium text-slate-700">Status</label>
-        <select name="status" onchange="document.getElementById('filter-form').submit()" class="w-full rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 outline-none focus:border-slate-900">
+        <select name="status" class="w-full rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 outline-none focus:border-slate-900">
           <option value="">All Customers</option>
           <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Active</option>
           <option value="inactive" {{ request('status') === 'inactive' ? 'selected' : '' }}>Inactive</option>
         </select>
+      </div>
+      <div class="md:col-span-2 flex gap-2">
+        <button type="submit" class="rounded-full bg-slate-900 px-4 py-3 text-sm text-white hover:bg-slate-700">Search</button>
+        <a href="{{ route('admin.customers.index') }}" class="rounded-full border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 hover:bg-slate-50">Reset</a>
       </div>
     </form>
   </div>

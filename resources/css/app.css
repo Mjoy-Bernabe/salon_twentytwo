@@ -1,5 +1,214 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Manrope:wght@400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.admin-shell {
+  --admin-black: rgb(0, 0, 0);
+  --admin-gold: rgb(202, 138, 4);
+  --admin-surface: #111111;
+  --admin-surface-soft: #191919;
+  --admin-border: rgba(202, 138, 4, 0.2);
+  --admin-text: #e5e5e5;
+  --admin-muted: #a3a3a3;
+  font-family: 'Manrope', sans-serif;
+  background:
+    radial-gradient(circle at 80% -20%, rgba(202, 138, 4, 0.12), transparent 35%),
+    radial-gradient(circle at 10% 120%, rgba(202, 138, 4, 0.08), transparent 40%),
+    #0a0a0a;
+  color: var(--admin-text);
+}
+
+.admin-shell .admin-brand {
+  font-family: 'Manrope', sans-serif;
+  letter-spacing: 0.06em;
+  color: #f5f5f5;
+}
+
+.admin-shell .admin-brand .brand-salon {
+  color: #ffffff;
+  font-weight: 800;
+}
+
+.admin-shell .admin-brand .brand-twentytwo {
+  color: rgb(202, 138, 4);
+  font-weight: 500;
+  margin-left: 0.08em;
+}
+
+.admin-shell h1,
+.admin-shell h2,
+.admin-shell h3 {
+  color: #f7f7f7 !important;
+}
+
+.admin-shell p,
+.admin-shell label,
+.admin-shell th,
+.admin-shell td,
+.admin-shell span:not([class*='bg-']) {
+  color: var(--admin-muted);
+}
+
+.admin-shell .bg-white,
+.admin-shell [class*="bg-slate-50"],
+.admin-shell [class*="bg-slate-100"] {
+  background-color: var(--admin-surface) !important;
+}
+
+.admin-shell .border-slate-200,
+.admin-shell .border-slate-300 {
+  border-color: var(--admin-border) !important;
+}
+
+.admin-shell .shadow-sm,
+.admin-shell .shadow-lg,
+.admin-shell .shadow-xl {
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.35) !important;
+}
+
+.admin-shell table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.admin-shell thead {
+  background: #141414 !important;
+}
+
+.admin-shell tbody {
+  background: #101010 !important;
+}
+
+.admin-shell tbody tr:hover {
+  background: rgba(202, 138, 4, 0.06);
+}
+
+.admin-shell a.rounded-full,
+.admin-shell button.rounded-full,
+.admin-shell a.rounded-2xl,
+.admin-shell button.rounded-2xl,
+.admin-shell a.rounded-lg,
+.admin-shell button.rounded-lg {
+  transition: all 0.2s ease;
+}
+
+.admin-shell .bg-slate-900,
+.admin-shell [class*="bg-slate-900"] {
+  background: var(--admin-black) !important;
+  color: #f4f4f5 !important;
+  border: 1px solid rgba(202, 138, 4, 0.35);
+}
+
+.admin-shell .bg-slate-900:hover,
+.admin-shell [class*="bg-slate-900"]:hover {
+  background: rgba(202, 138, 4, 0.14) !important;
+  color: rgb(202, 138, 4) !important;
+  border-color: rgba(202, 138, 4, 0.75);
+}
+
+.admin-shell .bg-rose-500,
+.admin-shell .bg-emerald-500,
+.admin-shell .bg-blue-500,
+.admin-shell .bg-slate-500 {
+  background: #1b1b1b !important;
+  color: #f4f4f5 !important;
+  border: 1px solid rgba(202, 138, 4, 0.35);
+}
+
+.admin-shell .bg-rose-500:hover,
+.admin-shell .bg-emerald-500:hover,
+.admin-shell .bg-blue-500:hover,
+.admin-shell .bg-slate-500:hover {
+  background: rgba(202, 138, 4, 0.14) !important;
+  color: rgb(202, 138, 4) !important;
+  border-color: rgba(202, 138, 4, 0.75);
+}
+
+.admin-shell input,
+.admin-shell select,
+.admin-shell textarea {
+  background: var(--admin-surface-soft) !important;
+  border-color: var(--admin-border) !important;
+  color: #e5e5e5 !important;
+}
+
+.admin-shell input[type="checkbox"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 1rem;
+  height: 1rem;
+  border: 1px solid rgba(202, 138, 4, 0.45);
+  border-radius: 0.25rem;
+  background: #0f0f0f !important;
+  display: inline-grid;
+  place-content: center;
+  cursor: pointer;
+  opacity: 1 !important;
+}
+
+.admin-shell input[type="checkbox"]:checked {
+  background-color: rgb(202, 138, 4) !important;
+  border-color: rgb(202, 138, 4) !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%23000000' stroke-linecap='round' stroke-linejoin='round' stroke-width='2.3' d='M3.2 8.4 6.5 11.4 12.8 4.8'/%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 0.8rem 0.8rem;
+}
+
+.admin-shell input[type="checkbox"]:focus-visible {
+  outline: 2px solid rgba(202, 138, 4, 0.35);
+  outline-offset: 2px;
+}
+
+.admin-shell input:focus,
+.admin-shell select:focus,
+.admin-shell textarea:focus {
+  border-color: rgba(202, 138, 4, 0.7) !important;
+  box-shadow: 0 0 0 2px rgba(202, 138, 4, 0.15);
+}
+
+.admin-shell .text-slate-900 {
+  color: #f5f5f5 !important;
+}
+
+.admin-shell .text-slate-600,
+.admin-shell .text-slate-700 {
+  color: var(--admin-muted) !important;
+}
+
+.admin-shell .bg-emerald-50,
+.admin-shell .bg-rose-50 {
+  background: #111111 !important;
+}
+
+.admin-shell .border-emerald-200,
+.admin-shell .border-rose-200 {
+  border-color: var(--admin-border) !important;
+}
+
+.admin-shell .text-emerald-900 {
+  color: #facc15 !important;
+}
+
+.admin-shell .text-rose-900 {
+  color: #fda4af !important;
+}
+
+.admin-shell nav[role="navigation"] {
+  color: #d4d4d8;
+}
+
+.admin-shell nav[role="navigation"] a,
+.admin-shell nav[role="navigation"] span {
+  border-color: var(--admin-border) !important;
+  background: #111111 !important;
+  color: #d4d4d8 !important;
+}
+
+.admin-shell nav[role="navigation"] span[aria-current="page"] {
+  background: rgba(202, 138, 4, 0.18) !important;
+  color: rgb(202, 138, 4) !important;
+}

@@ -17,15 +17,15 @@
 
   @include('admin.partials.alerts')
 
-  <div class="grid gap-5 lg:grid-cols-3 mb-6 animate-fadeIn">
+  <div class="mb-6 grid gap-5 lg:grid-cols-3 animate-fadeIn">
     <article class="rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm transition-all duration-300 hover:shadow-lg">
-      <p class="text-sm uppercase tracking-[0.18em] text-slate-500">Revenue (done)</p>
-      <p class="mt-4 text-4xl font-semibold text-slate-900 animate-pulse-slow">₱{{ number_format($revenue, 2) }}</p>
+      <p class="text-sm uppercase tracking-[0.18em] text-slate-500">Revenue (Done)</p>
+      <p class="mt-4 text-4xl font-semibold text-slate-900 animate-pulse-slow">PHP {{ number_format($revenue, 2) }}</p>
     </article>
 
     <article class="rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm transition-all duration-300 hover:shadow-lg">
       <p class="text-sm uppercase tracking-[0.18em] text-slate-500">Estimated Monthly Income</p>
-      <p class="mt-4 text-4xl font-semibold text-slate-900 animate-pulse-slow">₱{{ number_format($estimatedMonthly, 2) }}</p>
+      <p class="mt-4 text-4xl font-semibold text-slate-900 animate-pulse-slow">PHP {{ number_format($estimatedMonthly, 2) }}</p>
     </article>
 
     <article class="rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm transition-all duration-300 hover:shadow-lg">
@@ -34,14 +34,13 @@
     </article>
   </div>
 
-  <div class="grid gap-5 lg:grid-cols-2 mb-6">
-    <!-- Top 3 Stylists -->
+  <div class="mb-6 grid gap-5 lg:grid-cols-2">
     <article class="rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm animate-slideInLeft">
       <h2 class="mb-4 text-xl font-semibold text-slate-900">Top 3 Stylists</h2>
       <div class="space-y-3">
         @forelse($topStylists as $index => $stylist)
-          <div class="flex items-center gap-4 p-3 rounded-lg bg-slate-50 hover:bg-slate-100 transition-colors duration-200">
-            <div class="flex items-center justify-center w-8 h-8 rounded-full {{ $index === 0 ? 'bg-yellow-400' : ($index === 1 ? 'bg-gray-300' : 'bg-orange-400') }} text-white font-semibold text-sm">
+          <div class="flex items-center gap-4 rounded-lg border border-amber-600/20 bg-slate-50 p-3 transition-colors duration-200 hover:bg-slate-100">
+            <div class="flex h-8 w-8 items-center justify-center rounded-full border border-amber-600/50 bg-black text-sm font-semibold text-amber-500">
               #{{ $index + 1 }}
             </div>
             <div class="flex-1">
@@ -55,9 +54,8 @@
       </div>
     </article>
 
-    <!-- Monthly Income Chart -->
     <article class="rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm animate-slideInRight">
-      <div class="flex items-center justify-between mb-4">
+      <div class="mb-4 flex items-center justify-between">
         <h2 class="text-xl font-semibold text-slate-900">Monthly Income</h2>
         <select id="year-filter" class="rounded-lg border border-slate-300 bg-slate-50 px-3 py-1 text-sm outline-none focus:border-slate-900" onchange="location.href='?year=' + this.value">
           @for($y = now()->year - 2; $y <= now()->year; $y++)
@@ -65,7 +63,7 @@
           @endfor
         </select>
       </div>
-      
+
       <div style="height: 300px;">
         <canvas id="monthlyIncomeChart"></canvas>
       </div>
@@ -77,13 +75,12 @@
     <p class="text-4xl font-semibold text-slate-900">{{ $activeStylists }}</p>
   </div>
 
-  <!-- Include Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       const monthlyData = @json($monthlyIncomeData);
       const ctx = document.getElementById('monthlyIncomeChart');
-      
+
       if (ctx) {
         new Chart(ctx, {
           type: 'line',
@@ -92,14 +89,14 @@
             datasets: [{
               label: 'Monthly Income',
               data: monthlyData.map(d => d.income),
-              borderColor: 'rgb(15, 23, 42)',
-              backgroundColor: 'rgba(15, 23, 42, 0.1)',
+              borderColor: 'rgb(202, 138, 4)',
+              backgroundColor: 'rgba(202, 138, 4, 0.16)',
               borderWidth: 2,
               fill: true,
               tension: 0.4,
               pointRadius: 6,
-              pointBackgroundColor: 'rgb(15, 23, 42)',
-              pointBorderColor: 'white',
+              pointBackgroundColor: 'rgb(202, 138, 4)',
+              pointBorderColor: 'rgb(0, 0, 0)',
               pointBorderWidth: 2,
               pointHoverRadius: 8,
             }]
@@ -118,7 +115,7 @@
                 beginAtZero: true,
                 ticks: {
                   callback: function(value) {
-                    return '₱' + value.toLocaleString();
+                    return 'PHP ' + value.toLocaleString();
                   }
                 }
               }

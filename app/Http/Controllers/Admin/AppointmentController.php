@@ -13,15 +13,28 @@ use Illuminate\Support\Facades\Mail;
 
 class AppointmentController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $query = Appointment::with(['customer', 'stylist', 'services']);
 
-        if (request()->has('status') && request()->status !== '') {
-            $query->where('status', request()->status);
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
         }
 
-        $appointments = $query->paginate(10);
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->whereHas('customer', function ($customerQuery) use ($search) {
+                    $customerQuery->where('name', 'like', '%' . $search . '%')
+                        ->orWhere('email', 'like', '%' . $search . '%');
+                })->orWhereHas('stylist', function ($stylistQuery) use ($search) {
+                    $stylistQuery->where('name', 'like', '%' . $search . '%')
+                        ->orWhere('email', 'like', '%' . $search . '%');
+                });
+            });
+        }
+
+        $appointments = $query->paginate(10)->withQueryString();
         return view('admin.appointments.index', compact('appointments'));
     }
 

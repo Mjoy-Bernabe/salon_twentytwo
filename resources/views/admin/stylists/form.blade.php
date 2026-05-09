@@ -15,19 +15,19 @@
   </div>
 
   <div>
-    <p class="mb-2 text-base font-semibold text-slate-900">⭐ Services handled by this stylist</p>
+    <p class="mb-2 text-base font-semibold text-slate-900"> Services handled by this stylist</p>
     
-    <div class="mb-4 flex gap-2 rounded-2xl border-2 border-blue-300 bg-blue-50 p-4">
+    <div class="mb-4 flex gap-2 rounded-2xl border border-slate-200 bg-slate-50 p-4">
       <input 
         type="text" 
         id="service-search" 
         placeholder="Search and add services..." 
-        class="flex-1 rounded-2xl border border-slate-300 bg-white px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 font-medium"
+        class="flex-1 rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 font-medium outline-none focus:border-slate-900"
       />
       <button 
         type="button" 
         id="add-service-btn" 
-        class="rounded-2xl bg-blue-500 px-5 py-3 text-white hover:bg-blue-600 transition-colors font-semibold"
+        class="rounded-2xl bg-slate-900 px-5 py-3 text-white hover:bg-slate-700 transition-colors font-semibold"
       >Add Service</button>
     </div>
 
@@ -37,11 +37,11 @@
           $selectedService = collect($services)->firstWhere('id', $selectedId);
         @endphp
         @if($selectedService)
-          <div class="flex items-center justify-between rounded-2xl border border-blue-200 bg-blue-100 px-4 py-3">
-            <span class="font-medium text-blue-900">{{ $selectedService->service_name }}</span>
+          <div class="flex items-center justify-between rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
+            <span class="font-medium text-slate-900">{{ $selectedService->service_name }}</span>
             <button 
               type="button" 
-              class="remove-service text-blue-700 hover:text-blue-900 font-bold"
+              class="remove-service text-amber-500 hover:text-amber-400 font-bold"
               data-service-id="{{ $selectedId }}"
             >
               ✕
@@ -54,10 +54,10 @@
 
     <div id="service-suggestions" class="mb-4 grid gap-2 sm:grid-cols-2"></div>
 
-    <div class="grid gap-2 sm:grid-cols-2 opacity-50">
+    <div class="grid gap-2 sm:grid-cols-2">
       @foreach($services as $service)
         <label class="flex items-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
-          <input type="checkbox" name="service_ids[]" value="{{ $service->id }}" {{ in_array($service->id, old('service_ids', $selectedServices ?? [])) ? 'checked' : '' }} class="h-4 w-4 rounded border-slate-300 text-blue-500 focus:ring-blue-500 service-checkbox" data-service-id="{{ $service->id }}" data-service-name="{{ $service->service_name }}" />
+          <input type="checkbox" name="service_ids[]" value="{{ $service->id }}" {{ in_array($service->id, old('service_ids', $selectedServices ?? [])) ? 'checked' : '' }} class="h-4 w-4 rounded border-slate-300 text-amber-500 focus:ring-amber-500 service-checkbox" data-service-id="{{ $service->id }}" data-service-name="{{ $service->service_name }}" />
           <span>{{ $service->service_name }}</span>
         </label>
       @endforeach
@@ -96,7 +96,7 @@ document.addEventListener('DOMContentLoaded', function() {
     suggestions.forEach(service => {
       const div = document.createElement('button');
       div.type = 'button';
-      div.className = 'text-left rounded-2xl border border-slate-300 bg-white px-4 py-3 hover:bg-slate-50';
+      div.className = 'text-left rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 hover:bg-slate-100';
       div.textContent = service.name;
       div.onclick = (e) => {
         e.preventDefault();
@@ -113,10 +113,10 @@ document.addEventListener('DOMContentLoaded', function() {
     if (selected.includes(serviceId)) return;
 
     const div = document.createElement('div');
-    div.className = 'flex items-center justify-between rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3';
+    div.className = 'flex items-center justify-between rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3';
     div.innerHTML = `
       <span>${serviceName}</span>
-      <button type="button" class="remove-service text-emerald-700 hover:text-emerald-900" data-service-id="${serviceId}">✕</button>
+      <button type="button" class="remove-service text-amber-500 hover:text-amber-400" data-service-id="${serviceId}">✕</button>
       <input type="hidden" name="service_ids[]" value="${serviceId}" class="service-input" />
     `;
 

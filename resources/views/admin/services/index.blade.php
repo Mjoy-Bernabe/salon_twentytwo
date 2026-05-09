@@ -8,7 +8,7 @@
       <h1 class="text-3xl font-semibold text-slate-900">Services</h1>
       <p class="mt-2 text-sm text-slate-600">Manage service pricing, promos, and stylist availability.</p>
     </div>
-    <a href="{{ route('admin.services.create') }}" class="rounded-full bg-slate-900 px-4 py-3 text-sm text-white hover:bg-slate-700">Add {{ $tab === 'promo' ? 'Promo' : 'Service' }}</a>
+    <a href="{{ route('admin.services.create', $tab === 'promo' ? ['is_promo' => 1] : []) }}" class="rounded-full bg-slate-900 px-4 py-3 text-sm text-white hover:bg-slate-700">Add {{ $tab === 'promo' ? 'Promo' : 'Service' }}</a>
   </div>
 
   @include('admin.partials.alerts')

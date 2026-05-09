@@ -13,6 +13,19 @@
 
   @include('admin.partials.alerts')
 
+  <div class="mb-6 rounded-[28px] bg-white p-6 shadow-sm">
+    <form method="GET" action="{{ route('admin.stylists.index') }}" class="grid gap-4 md:grid-cols-[1fr_auto]">
+      <div>
+        <label class="mb-2 block text-sm font-medium text-slate-700">Search by Name or Email</label>
+        <input type="text" name="search" value="{{ request('search') }}" placeholder="Enter stylist name or email" class="w-full rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 outline-none focus:border-slate-900" />
+      </div>
+      <div class="flex items-end gap-2">
+        <button type="submit" class="rounded-full bg-slate-900 px-4 py-3 text-sm text-white hover:bg-slate-700">Search</button>
+        <a href="{{ route('admin.stylists.index') }}" class="rounded-full border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 hover:bg-slate-50">Reset</a>
+      </div>
+    </form>
+  </div>
+
   <div class="overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-sm">
     <table class="min-w-full divide-y divide-slate-200 text-left text-sm">
       <thead class="bg-slate-50">

@@ -9,15 +9,25 @@ use Illuminate\Http\Request;
 
 class StylistController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $stylists = Stylist::with('services', 'schedules')->paginate(10);
+        $query = Stylist::with('services', 'schedules');
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', '%' . $search . '%')
+                    ->orWhere('email', 'like', '%' . $search . '%');
+            });
+        }
+
+        $stylists = $query->paginate(10)->withQueryString();
         return view('admin.stylists.index', compact('stylists'));
     }
 
     public function create()
     {
-        $services = Service::all();
+        $services = Service::where('is_promo', false)->get();
         return view('admin.stylists.create', compact('services'));    }
 
     public function store(Request $request)
@@ -42,7 +52,7 @@ class StylistController extends Controller
 
     public function edit(Stylist $stylist)
     {
-        $services = Service::all();
+        $services = Service::where('is_promo', false)->get();
         $selectedServices = $stylist->services()->pluck('services.id')->toArray();
 
         return view('admin.stylists.edit', compact('stylist', 'services', 'selectedServices'));
