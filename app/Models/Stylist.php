@@ -11,6 +11,8 @@ class Stylist extends Model
 
     protected $fillable = [
         'name',
+        'contact',
+        'email',
     ];
 
     public function services()

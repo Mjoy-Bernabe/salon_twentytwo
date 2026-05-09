@@ -15,16 +15,30 @@
 
   <div class="mb-8 rounded-[28px] bg-white p-6 shadow-sm">
     <h2 class="mb-4 text-xl font-semibold text-slate-900">Existing Schedule</h2>
-    <div class="grid gap-4 md:grid-cols-2">
-      @forelse($stylist->schedules as $schedule)
-        <div class="rounded-3xl border border-slate-200 bg-slate-50 p-4">
-          <p class="font-semibold text-slate-900">{{ $schedule->day }}</p>
-          <p class="text-sm text-slate-600">{{ $schedule->start_time }} - {{ $schedule->end_time }}</p>
-        </div>
-      @empty
-        <p class="text-sm text-slate-600">No schedule entries yet.</p>
-      @endforelse
-    </div>
+    @if($stylist->schedules->count() > 0)
+      <div class="grid gap-4 md:grid-cols-2">
+        @foreach($stylist->schedules as $schedule)
+          <div class="rounded-3xl border border-slate-200 bg-slate-50 p-4">
+            <div class="flex items-start justify-between">
+              <div>
+                <p class="font-semibold text-slate-900">{{ $schedule->day }}</p>
+                <p class="text-sm text-slate-600">{{ $schedule->start_time }} - {{ $schedule->end_time }}</p>
+              </div>
+              <div class="flex gap-2">
+                <a href="{{ route('admin.stylists-schedule.edit', $schedule->id) }}" class="rounded-full bg-slate-900 px-3 py-2 text-xs text-white hover:bg-slate-700">Edit</a>
+                <form action="{{ route('admin.stylists-schedule.delete', $schedule->id) }}" method="POST" class="inline-block">
+                  @csrf
+                  @method('DELETE')
+                  <button type="submit" class="rounded-full bg-rose-500 px-3 py-2 text-xs text-white hover:bg-rose-600" onclick="return confirm('Are you sure?')">Delete</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        @endforeach
+      </div>
+    @else
+      <p class="text-sm text-slate-600">No schedule entries yet.</p>
+    @endif
   </div>
 
   <form method="POST" action="{{ route('admin.stylists.schedule.store', $stylist->id) }}" class="rounded-[28px] bg-white p-6 shadow-sm">

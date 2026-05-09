@@ -17,6 +17,7 @@
         <a href="{{ route('admin.dashboard') }}" class="block rounded-lg px-4 py-3 hover:bg-slate-100 {{ request()->routeIs('admin.dashboard') ? 'bg-slate-100 text-slate-900' : '' }}">Dashboard</a>
         <a href="{{ route('admin.services.index') }}" class="block rounded-lg px-4 py-3 hover:bg-slate-100 {{ request()->routeIs('admin.services.*') ? 'bg-slate-100 text-slate-900' : '' }}">Services</a>
         <a href="{{ route('admin.stylists.index') }}" class="block rounded-lg px-4 py-3 hover:bg-slate-100 {{ request()->routeIs('admin.stylists.*') ? 'bg-slate-100 text-slate-900' : '' }}">Stylists</a>
+        <a href="{{ route('admin.customers.index') }}" class="block rounded-lg px-4 py-3 hover:bg-slate-100 {{ request()->routeIs('admin.customers.*') ? 'bg-slate-100 text-slate-900' : '' }}">Customers</a>
         <a href="{{ route('admin.appointments.index') }}" class="block rounded-lg px-4 py-3 hover:bg-slate-100 {{ request()->routeIs('admin.appointments.*') ? 'bg-slate-100 text-slate-900' : '' }}">Appointments</a>
       </nav>
 

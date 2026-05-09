@@ -24,11 +24,17 @@ class StylistController extends Controller
     {
         $data = $request->validate([
             'name' => 'required|string|max:100',
+            'contact' => 'nullable|string|max:20',
+            'email' => 'nullable|email|unique:stylists,email',
             'service_ids' => 'nullable|array',
             'service_ids.*' => 'exists:services,id',
         ]);
 
-        $stylist = Stylist::create(['name' => $data['name']]);
+        $stylist = Stylist::create([
+            'name' => $data['name'],
+            'contact' => $data['contact'] ?? null,
+            'email' => $data['email'] ?? null,
+        ]);
         $stylist->services()->sync($data['service_ids'] ?? []);
 
         return redirect()->route('admin.stylists.index')->with('success', 'Stylist created successfully.');
@@ -37,7 +43,7 @@ class StylistController extends Controller
     public function edit(Stylist $stylist)
     {
         $services = Service::all();
-        $selectedServices = $stylist->services()->pluck('id')->toArray();
+        $selectedServices = $stylist->services()->pluck('services.id')->toArray();
 
         return view('admin.stylists.edit', compact('stylist', 'services', 'selectedServices'));
     }
@@ -46,11 +52,17 @@ class StylistController extends Controller
     {
         $data = $request->validate([
             'name' => 'required|string|max:100',
+            'contact' => 'nullable|string|max:20',
+            'email' => 'nullable|email|unique:stylists,email,' . $stylist->id,
             'service_ids' => 'nullable|array',
             'service_ids.*' => 'exists:services,id',
         ]);
 
-        $stylist->update(['name' => $data['name']]);
+        $stylist->update([
+            'name' => $data['name'],
+            'contact' => $data['contact'] ?? null,
+            'email' => $data['email'] ?? null,
+        ]);
         $stylist->services()->sync($data['service_ids'] ?? []);
 
         return redirect()->route('admin.stylists.index')->with('success', 'Stylist updated successfully.');
@@ -91,5 +103,40 @@ class StylistController extends Controller
         ]);
 
         return redirect()->back()->with('success', 'Schedule added.');
+    }
+
+    public function editSchedule(int $id)
+    {
+        $schedule = \App\Models\StylistSchedule::findOrFail($id);
+        $stylist = $schedule->stylist;
+        return view('admin.stylists.schedule-edit', compact('schedule', 'stylist'));
+    }
+
+    public function updateSchedule(Request $request, int $id)
+    {
+        $schedule = \App\Models\StylistSchedule::findOrFail($id);
+
+        $request->validate([
+            'day' => 'required|in:Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday',
+            'start_time' => 'required',
+            'end_time' => 'required',
+        ]);
+
+        $schedule->update([
+            'day' => $request->day,
+            'start_time' => $request->start_time,
+            'end_time' => $request->end_time,
+        ]);
+
+        return redirect()->route('admin.stylists.schedule', $schedule->stylist_id)->with('success', 'Schedule updated.');
+    }
+
+    public function deleteSchedule(int $id)
+    {
+        $schedule = \App\Models\StylistSchedule::findOrFail($id);
+        $stylist_id = $schedule->stylist_id;
+        $schedule->delete();
+
+        return redirect()->route('admin.stylists.schedule', $stylist_id)->with('success', 'Schedule deleted.');
     }
 }
