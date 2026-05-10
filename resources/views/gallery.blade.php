@@ -26,8 +26,8 @@
     <li><a href="{{ route('contact') }}" class="text-sm font-medium tracking-wider uppercase text-gray-500 hover:text-yellow-600 transition-colors">Contact</a></li>
   </ul>
   <div class="flex gap-5 items-center">
-    <a href="#" class="text-sm tracking-wider uppercase text-gray-400 hover:text-yellow-600 transition-colors">Instagram</a>
-    <a href="#" class="text-sm tracking-wider uppercase text-gray-400 hover:text-yellow-600 transition-colors">Facebook</a>
+    <a href="https://www.instagram.com/twentytwo.salon/" target="_blank" rel="noopener noreferrer" class="text-sm tracking-wider uppercase text-gray-400 hover:text-yellow-600 transition-colors">Instagram</a>
+    <a href="https://www.facebook.com/profile.php?id=61562223720806" target="_blank" rel="noopener noreferrer" class="text-sm tracking-wider uppercase text-gray-400 hover:text-yellow-600 transition-colors">Facebook</a>
     <a href="{{ route('booknow') }}" class="bg-black hover:bg-yellow-600 text-white text-sm font-semibold tracking-wider uppercase px-5 py-3 transition-colors">Book Now</a>
   </div>
 </nav>
@@ -38,28 +38,32 @@
     <h1 class="text-6xl font-black uppercase tracking-tighter text-black">The Gallery</h1>
 </section>
 
-{{-- Filter --}}
-<div class="flex justify-center gap-12 mb-16 px-12">
-    <button class="filter-btn active">All Work</button>
-    <button class="filter-btn">Signature Cut</button>
-    <button class="filter-btn">Chroma Colour</button>
-    <button class="filter-btn">Event Styling</button>
-</div>
+
 
 {{-- Grid --}}
 <section class="px-4 md:px-12 pb-32">
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
-        @for ($i = 1; $i <= 8; $i++)
+        @forelse ($galleryImages as $image)
         <div class="gallery-item group">
-            <img src="{{ asset('images/hero.jpg') }}" class="gallery-img" alt="Gallery Work">
+            <img src="{{ asset($image) }}" class="gallery-img" alt="Salon TwentyTwo gallery work {{ $loop->iteration }}">
             <div class="gallery-overlay">
                 <div>
                     <p class="text-yellow-500 text-xs font-bold uppercase tracking-widest">Technique</p>
-                    <h4 class="text-white text-sm font-bold uppercase tracking-widest">Precision Finish</h4>
+                    <h4 class="text-white text-sm font-bold uppercase tracking-widest">Salon Finish</h4>
                 </div>
             </div>
         </div>
-        @endfor
+        @empty
+        <div class="gallery-item group">
+            <img src="{{ asset('images/hero.jpg') }}" class="gallery-img" alt="Salon TwentyTwo gallery work">
+            <div class="gallery-overlay">
+                <div>
+                    <p class="text-yellow-500 text-xs font-bold uppercase tracking-widest">Technique</p>
+                    <h4 class="text-white text-sm font-bold uppercase tracking-widest">Salon Finish</h4>
+                </div>
+            </div>
+        </div>
+        @endforelse
     </div>
 </section>
 

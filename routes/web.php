@@ -1,10 +1,12 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\File;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\StylistController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\CustomerAuthController;
 use App\Http\Controllers\Admin\AdminAuthController;
@@ -20,8 +22,20 @@ use App\Http\Controllers\Admin\AppointmentController as AdminAppointmentControll
 */
 Route::get('/', [DashboardController::class, 'index'])->name('home');
 Route::get('/about',   function () { return view('about'); })->name('about');
-Route::get('/gallery', function () { return view('gallery'); })->name('gallery');
+Route::get('/gallery', function () {
+    $galleryImages = collect(File::directories(public_path('images')))
+        ->filter(fn ($directory) => preg_match('/img\d+_files$/', str_replace('\\', '/', $directory)))
+        ->flatMap(fn ($directory) => File::files($directory))
+        ->filter(fn ($file) => in_array(strtolower($file->getExtension()), ['jpg', 'jpeg', 'png', 'webp'], true))
+        ->unique(fn ($file) => $file->getFilename())
+        ->sortBy(fn ($file) => $file->getFilename())
+        ->map(fn ($file) => 'images/' . basename($file->getPath()) . '/' . $file->getFilename())
+        ->values();
+
+    return view('gallery', compact('galleryImages'));
+})->name('gallery');
 Route::get('/contact', function () { return view('contact'); })->name('contact');
+Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
 
 /*
 |--------------------------------------------------------------------------

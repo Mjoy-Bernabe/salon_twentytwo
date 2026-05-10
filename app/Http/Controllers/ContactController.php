@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\ContactConfirmation;
+use App\Mail\Contactemail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -17,12 +19,11 @@ class ContactController extends Controller
             'message' => ['required', 'string', 'max:5000'],
         ]);
 
-        Mail::send('emails.contact', ['data' => $data], function ($message) use ($data) {
-            $message
-                ->to(config('mail.from.address'), config('mail.from.name'))
-                ->replyTo($data['email'], $data['name'])
-                ->subject('Salon TwentyTwo Contact: ' . $data['subject']);
-        });
+        Mail::to(config('mail.from.address'), config('mail.from.name'))
+            ->send(new Contactemail($data));
+
+        Mail::to($data['email'], $data['name'])
+            ->send(new ContactConfirmation($data));
 
         return back()->with('success', 'Thank you. Your message has been sent.');
     }
