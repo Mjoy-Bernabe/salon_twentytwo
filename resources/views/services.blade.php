@@ -38,7 +38,7 @@
 
     <div class="flex gap-6 items-center">
         <a href="#" class="text-sm font-semibold tracking-wider uppercase text-gray-400 hover:text-black transition-colors no-underline">Sign In</a>
-        <a href="#" class="text-sm tracking-wider uppercase text-gray-400 hover:text-yellow-600 transition-colors no-underline">Instagram</a>
+        <a href="https://www.instagram.com/twentytwo.salon/" target="_blank" rel="noopener noreferrer" class="text-sm tracking-wider uppercase text-gray-400 hover:text-yellow-600 transition-colors no-underline">Instagram</a>
         <a href="{{ route('booknow') }}" class="bg-black hover:bg-yellow-600 text-white text-sm font-bold tracking-wider uppercase px-6 py-3 transition-colors no-underline">Book Now</a>
     </div>
 </nav>
@@ -46,7 +46,7 @@
 
 {{-- Page Hero --}}
 <section style="position:relative; height:60vh; background:#000; overflow:hidden; display:flex; align-items:center; justify-content:center; text-align:center;">
-    <img src="{{ asset('images/services.jpg') }}"
+    <img src="{{ asset('images/full.jpg') }}"
          style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center; display:block; opacity:0.4; filter:grayscale(20%);"
          alt="Our Services Background">
     <div style="position:absolute; inset:0; background:linear-gradient(to bottom, rgba(0,0,0,0.6), rgba(0,0,0,0.3), rgba(0,0,0,0.7));"></div>
@@ -61,7 +61,7 @@
 {{-- Consultation Section --}}
 <section style="display:grid; grid-template-columns:1fr 1fr; background:#fff;">
     <div style="height:600px; overflow:hidden;">
-        <img src="{{ asset('images/services.jpg') }}"
+        <img src="{{ asset('images/Frontsalon.jpg') }}"
              style="width:100%; height:100%; object-fit:cover; object-position:center; display:block; transition:transform 0.7s ease;"
              alt="Salon Consultation"
              onmouseover="this.style.transform='scale(1.05)'"
@@ -125,7 +125,7 @@
     <div style="max-width:1280px; margin:0 auto; padding:0 48px; display:grid; grid-template-columns:1fr 1fr; gap:96px; align-items:center;">
         <div style="position:relative;">
             <div style="aspect-ratio:4/5; background:#262626; position:relative; overflow:hidden;">
-                <img src="{{ asset('images/services.jpg') }}"
+                <img src="{{ asset('images/signature.jpg') }}"
                      style="width:100%; height:100%; object-fit:cover; object-position:center; display:block; opacity:0.75; transition:opacity 0.7s, transform 0.7s;"
                      alt="Signature Colour"
                      onmouseover="this.style.opacity='1'; this.style.transform='scale(1.05)'"
