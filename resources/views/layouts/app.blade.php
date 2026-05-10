@@ -10,5 +10,7 @@
 
   @yield('content')
 
+  @include('partials.salon-chatbot')
+
 </body>
 </html>

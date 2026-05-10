@@ -79,14 +79,14 @@
                     @csrf
                     <div>
                         <label class="contact-label">Full Name</label>
-                        <input type="text" name="name" value="{{ old('name') }}" class="contact-input" placeholder="Vince Russel">
+                        <input type="text" name="name" value="{{ old('name') }}" class="contact-input" placeholder="Juan Dela Cruz">
                         @error('name') <p class="mt-2 text-sm text-red-600">{{ $message }}</p> @enderror
                     </div>
 
                     <div class="grid grid-cols-2 gap-8">
                         <div>
                             <label class="contact-label">Email</label>
-                            <input type="email" name="email" value="{{ old('email') }}" class="contact-input" placeholder="vince@example.com">
+                            <input type="email" name="email" value="{{ old('email') }}" class="contact-input" placeholder="juan@example.com">
                             @error('email') <p class="mt-2 text-sm text-red-600">{{ $message }}</p> @enderror
                         </div>
                         <div>
