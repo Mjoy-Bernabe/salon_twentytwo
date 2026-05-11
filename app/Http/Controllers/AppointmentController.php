@@ -14,7 +14,7 @@ class AppointmentController extends Controller
     // Show booking page
     public function index()
     {
-        $services = Service::orderBy('service_name')->get()->unique('service_name')->values();
+        $services = Service::with(['components.stylists', 'stylists'])->orderBy('service_name')->get();
         $normalServices = $services->filter(fn ($service) => ! $service->is_promo);
         $cutNames = ['HAIRCUT', 'BLOW DRY', 'CURL IRON', 'TRADITIONAL PERM', 'REBOND'];
         $colourNames = ['HAIR COLOR', 'BALAYAGE', 'HIGHLIGHTS'];
@@ -105,8 +105,20 @@ class AppointmentController extends Controller
             'service_id' => 'required|exists:services,id',
         ]);
 
-        $service = Service::find($request->service_id);
+        $service = Service::with(['components.stylists', 'stylists'])->findOrFail($request->service_id);
         $stylists = $service->stylists;
+
+        if ($service->is_promo && $service->components->isNotEmpty()) {
+            $componentStylists = $service->components
+                ->flatMap(fn ($component) => $component->stylists)
+                ->unique('id')
+                ->values();
+
+            $stylists = $stylists
+                ->merge($componentStylists)
+                ->unique('id')
+                ->values();
+        }
 
         return response()->json($stylists);
     }

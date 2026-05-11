@@ -31,7 +31,9 @@ class ServiceController extends Controller
     {
         $stylists = Stylist::all();
         $baseServices = Service::where('is_promo', false)->orderBy('service_name')->get();
-        return view('admin.services.create', compact('stylists', 'baseServices'));
+        $isPromoForm = request()->boolean('is_promo');
+
+        return view('admin.services.create', compact('stylists', 'baseServices', 'isPromoForm'));
     }
 
     public function store(Request $request)
@@ -40,7 +42,7 @@ class ServiceController extends Controller
             'service_name' => 'required|string|max:100',
             'price' => 'required|numeric',
             'description' => 'nullable|string',
-            'is_promo' => 'nullable|boolean',
+            'is_promo' => 'required|boolean',
             'stylist_ids' => 'nullable|array',
             'stylist_ids.*' => 'exists:stylists,id',
             'component_service_ids' => ['nullable', 'array'],
@@ -51,7 +53,7 @@ class ServiceController extends Controller
             'service_name' => $data['service_name'],
             'price' => $data['price'],
             'description' => $data['description'] ?? null,
-            'is_promo' => $request->boolean('is_promo'),
+            'is_promo' => (bool) $data['is_promo'],
         ]);
 
         $service->stylists()->sync($data['stylist_ids'] ?? []);
@@ -66,8 +68,9 @@ class ServiceController extends Controller
         $baseServices = Service::where('is_promo', false)->orderBy('service_name')->get();
         $selectedStylists = $service->stylists()->pluck('stylists.id')->toArray();
         $selectedComponents = $service->components()->pluck('services.id')->toArray();
+        $isPromoForm = $service->is_promo;
 
-        return view('admin.services.edit', compact('service', 'stylists', 'selectedStylists', 'baseServices', 'selectedComponents'));
+        return view('admin.services.edit', compact('service', 'stylists', 'selectedStylists', 'baseServices', 'selectedComponents', 'isPromoForm'));
     }
 
     public function update(Request $request, Service $service)
@@ -76,7 +79,7 @@ class ServiceController extends Controller
             'service_name' => 'required|string|max:100',
             'price' => 'required|numeric',
             'description' => 'nullable|string',
-            'is_promo' => 'nullable|boolean',
+            'is_promo' => 'required|boolean',
             'stylist_ids' => 'nullable|array',
             'stylist_ids.*' => 'exists:stylists,id',
             'component_service_ids' => ['nullable', 'array'],
@@ -87,7 +90,7 @@ class ServiceController extends Controller
             'service_name' => $data['service_name'],
             'price' => $data['price'],
             'description' => $data['description'] ?? null,
-            'is_promo' => $request->boolean('is_promo'),
+            'is_promo' => (bool) $data['is_promo'],
         ]);
 
         $service->stylists()->sync($data['stylist_ids'] ?? []);
