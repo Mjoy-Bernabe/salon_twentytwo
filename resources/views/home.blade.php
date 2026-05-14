@@ -12,6 +12,9 @@
     <li><a href="{{ route('services.index') }}" class="text-sm font-medium tracking-wider uppercase text-gray-500 hover:text-yellow-600 transition-colors">Services</a></li>
     <li><a href="{{ route('gallery') }}" class="text-sm font-medium tracking-wider uppercase text-gray-500 hover:text-yellow-600 transition-colors">Gallery</a></li>
     <li><a href="{{ route('contact') }}" class="text-sm font-medium tracking-wider uppercase text-gray-500 hover:text-yellow-600 transition-colors">Contact</a></li>
+    @if(Auth::guard('customer')->check())
+    <li><a href="{{ route('customer.history') }}" class="text-sm font-medium tracking-wider uppercase text-gray-500 hover:text-yellow-600 transition-colors">My Bookings</a></li>
+    @endif
   </ul>
   <div class="flex items-center gap-5">
 
@@ -34,14 +37,14 @@
     <div class="flex items-center gap-4">
         @if(Auth::guard('customer')->check())
 
-            <span class="text-sm text-gray-400 uppercase tracking-wider">
+            <!-- <span class="text-sm text-gray-400 uppercase tracking-wider">
                 Hi, {{ Auth::guard('customer')->user()->name }}
-            </span>
+            </span> -->
 
-            <a href="{{ route('customer.history') }}"
+            <!-- <a href="{{ route('customer.history') }}"
                class="text-sm font-medium tracking-wider uppercase text-gray-500 hover:text-yellow-600 transition-colors">
                 My Bookings
-            </a>
+            </a> -->
 
             <form method="POST" action="{{ route('customer.logout') }}">
                 @csrf
@@ -141,7 +144,7 @@
     </a>
   </div>
   <div class="bg-neutral-900 flex items-center justify-center min-h-[500px]">
-    <p class="text-sm tracking-wider uppercase text-yellow-600 opacity-40">About image here</p>
+    <img src="{{ asset('images/signature.jpg') }}" class="w-full h-full object-cover" alt="Services Overview">
   </div>
 </section>
 
@@ -170,11 +173,16 @@
         <a href="#" class="block text-sm text-neutral-500 hover:text-yellow-600 transition-colors">Find Us</a>
       </div>
       <div>
+                <h4 style="font-size:12px; letter-spacing:0.12em; text-transform:uppercase; color:#404040; margin-bottom:16px; font-weight:700;">Visit</h4>
+                <p style="font-size:15px; color:#737373; margin-bottom:8px;">Mon – Sun</p>
+                <p style="font-size:15px; color:#737373;">10:00 AM – 10:00 PM</p>
+            </div>
+      <!-- <div>
         <h4 class="text-sm tracking-wider uppercase text-neutral-500 mb-4">Information</h4>
         <a href="#" class="block text-sm text-neutral-500 hover:text-yellow-600 mb-3 transition-colors">Contact Us</a>
         <a href="#" class="block text-sm text-neutral-500 hover:text-yellow-600 mb-3 transition-colors">Privacy Policy</a>
         <a href="#" class="block text-sm text-neutral-500 hover:text-yellow-600 transition-colors">Terms & Conditions</a>
-      </div>
+      </div> -->
     </div>
   </div>
   <div class="flex justify-between items-center">
@@ -182,7 +190,6 @@
     <div class="flex gap-6">
       <a href="https://www.facebook.com/profile.php?id=61562223720806" target="_blank" rel="noopener noreferrer" class="text-sm tracking-wider uppercase text-neutral-500 hover:text-yellow-600 transition-colors">Facebook</a>
       <a href="https://www.instagram.com/twentytwo.salon/" target="_blank" rel="noopener noreferrer" class="text-sm tracking-wider uppercase text-neutral-500 hover:text-yellow-600 transition-colors">Instagram</a>
-      <a href="#" class="text-sm tracking-wider uppercase text-neutral-500 hover:text-yellow-600 transition-colors">TikTok</a>
     </div>
   </div>
 </footer>

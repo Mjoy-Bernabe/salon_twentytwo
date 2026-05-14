@@ -34,11 +34,34 @@
                 Contact
             </a>
         </li>
+        
+        @if(Auth::guard('customer')->check())
+        <li>
+            <a href="{{ route('customer.history') }}" class="text-sm font-medium tracking-wider uppercase text-gray-500 hover:text-yellow-600 transition-colors no-underline">
+                My Bookings
+            </a>
+        </li>
+        @endif
     </ul>
 
     <div class="flex gap-6 items-center">
-        <a href="#" class="text-sm font-semibold tracking-wider uppercase text-gray-400 hover:text-black transition-colors no-underline">Sign In</a>
         <a href="https://www.instagram.com/twentytwo.salon/" target="_blank" rel="noopener noreferrer" class="text-sm tracking-wider uppercase text-gray-400 hover:text-yellow-600 transition-colors no-underline">Instagram</a>
+        <a href="https://www.facebook.com/profile.php?id=61562223720806"
+           target="_blank"
+           class="text-sm tracking-wider uppercase text-gray-400 hover:text-yellow-600 transition-colors">
+            Facebook
+        </a>
+        @if(Auth::guard('customer')->check())
+            <form method="POST" action="{{ route('customer.logout') }}" class="inline">
+                @csrf
+                <button type="submit" class="text-sm font-semibold tracking-wider uppercase text-gray-400 hover:text-black transition-colors bg-transparent border-none cursor-pointer p-0">
+                    Sign Out
+                </button>
+            </form>
+        @else
+            <a href="{{ route('customer.login') }}" class="text-sm font-semibold tracking-wider uppercase text-gray-400 hover:text-black transition-colors no-underline">Sign In</a>
+        @endif
+        
         <a href="{{ route('booknow') }}" class="bg-black hover:bg-yellow-600 text-white text-sm font-bold tracking-wider uppercase px-6 py-3 transition-colors no-underline">Book Now</a>
     </div>
 </nav>

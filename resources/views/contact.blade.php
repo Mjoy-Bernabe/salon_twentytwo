@@ -18,10 +18,26 @@
     <li><a href="{{ route('services.index') }}" class="text-sm font-medium tracking-wider uppercase text-gray-500 hover:text-yellow-600 transition-colors">Services</a></li>
     <li><a href="{{ route('gallery') }}" class="text-sm font-medium tracking-wider uppercase text-gray-500 hover:text-yellow-600 transition-colors">Gallery</a></li>
     <li><a href="{{ route('contact') }}" class="text-sm font-medium tracking-wider uppercase text-gray-500 hover:text-yellow-600 transition-colors">Contact</a></li>
+    
+    @if(Auth::guard('customer')->check())
+    <li><a href="{{ route('customer.history') }}" class="text-sm font-medium tracking-wider uppercase text-gray-500 hover:text-yellow-600 transition-colors">My Bookings</a></li>
+    @endif
   </ul>
   <div class="flex gap-5 items-center">
     <a href="https://www.instagram.com/twentytwo.salon/" target="_blank" rel="noopener noreferrer" class="text-sm tracking-wider uppercase text-gray-400 hover:text-yellow-600 transition-colors">Instagram</a>
     <a href="https://www.facebook.com/profile.php?id=61562223720806" target="_blank" rel="noopener noreferrer" class="text-sm tracking-wider uppercase text-gray-400 hover:text-yellow-600 transition-colors">Facebook</a>
+    
+    @if(Auth::guard('customer')->check())
+        <form method="POST" action="{{ route('customer.logout') }}" class="inline">
+            @csrf
+            <button type="submit" class="text-sm font-medium tracking-wider uppercase text-gray-500 hover:text-yellow-600 transition-colors bg-transparent border-none cursor-pointer p-0">
+                Sign Out
+            </button>
+        </form>
+    @else
+        <a href="{{ route('customer.login') }}" class="text-sm font-medium tracking-wider uppercase text-gray-500 hover:text-yellow-600 transition-colors">Sign In</a>
+    @endif
+    
     <a href="{{ route('booknow') }}" class="bg-black hover:bg-yellow-600 text-white text-sm font-semibold tracking-wider uppercase px-5 py-3 transition-colors">Book Now</a>
   </div>
 </nav>
@@ -43,11 +59,11 @@
                         </div>
                         <div>
                             <h4 class="text-sm font-black uppercase tracking-widest mb-4">Inquiries</h4>
-                            <p class="text-base text-gray-500">hello@salontwentytwo.com<br>0924 132 1925</p>
+                            <p class="text-base text-gray-500">salontwentytwo26@gmail.com<br>0924 132 1925</p>
                         </div>
                         <div>
                             <h4 class="text-sm font-black uppercase tracking-widest mb-4">Hours</h4>
-                            <p class="text-base text-gray-500 leading-relaxed">10:00am - 8:00pm<br>Open everyday</p>
+                            <p class="text-base text-gray-500 leading-relaxed">10:00am - 10:00pm<br>Open everyday</p>
                         </div>
                     </div>
 

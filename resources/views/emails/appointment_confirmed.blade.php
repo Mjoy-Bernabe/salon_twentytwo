@@ -26,9 +26,11 @@
 </head>
 <body>
 <div class="wrapper">
-    <div class="header">
-            Salon<span class="text-yellow-600 font-light">TwentyTwo</span>
-    </div>
+<div class="header">
+    <h1 style="color:#fff; font-size:22px; margin:0; letter-spacing:-0.02em; font-family:Arial,sans-serif;">
+        Salon<span style="color:#eab308; font-weight:300;">TwentyTwo</span>
+    </h1>
+</div>
     <div class="accent"></div>
     <div class="body">
         <p class="greeting">Hello, {{ $appointment->customer->name }}!</p>
@@ -56,11 +58,32 @@
             </tr>
         </table>
 
-        <table width="100%" cellpadding="0" cellspacing="0" style="background:#fefce8; border:1px solid #fde68a; margin-bottom:24px;">
-            <tr>
-                <td style="padding:16px 24px; font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:0.12em; color:#92400e;">Downpayment Paid (50%)</td>
-                <td style="padding:16px 24px; font-size:20px; font-weight:900; color:#111; text-align:right;">&#8369;{{ number_format($appointment->downpayment_amount, 0) }}</td>
+        @php
+            $total = $appointment->services->sum('price');
+            $paid  = $appointment->downpayment_amount ?? 0;
+            $remaining = $total - $paid;
+        @endphp
+
+        <table width="100%" cellpadding="0" cellspacing="0" style="background:#fafaf9; border:1px solid #e5e7eb; margin-bottom:24px;">
+            <tr style="border-bottom:1px solid #f3f4f6;">
+                <td style="padding:12px 24px; font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:0.12em; color:#9ca3af;">Total</td>
+                <td style="padding:12px 24px; font-size:15px; font-weight:900; color:#111; text-align:right;">&#8369;{{ number_format($total, 0) }}</td>
             </tr>
+            @if($paid > 0)
+            <tr style="border-bottom:1px solid #f3f4f6;">
+                <td style="padding:12px 24px; font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:0.12em; color:#9ca3af;">Downpayment Paid (50%)</td>
+                <td style="padding:12px 24px; font-size:15px; font-weight:900; color:#059669; text-align:right;">&#8369;{{ number_format($paid, 0) }}</td>
+            </tr>
+            <tr>
+                <td style="padding:12px 24px; font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:0.12em; color:#92400e; background:#fefce8;">Remaining Balance Due</td>
+                <td style="padding:12px 24px; font-size:20px; font-weight:900; color:#111; text-align:right; background:#fefce8;">&#8369;{{ number_format($remaining, 0) }}</td>
+            </tr>
+            @else
+            <tr>
+                <td style="padding:12px 24px; font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:0.12em; color:#92400e; background:#fefce8;">Full Amount Due on the Day</td>
+                <td style="padding:12px 24px; font-size:20px; font-weight:900; color:#111; text-align:right; background:#fefce8;">&#8369;{{ number_format($total, 0) }}</td>
+            </tr>
+            @endif
         </table>
 
         <p class="note">

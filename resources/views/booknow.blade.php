@@ -12,11 +12,25 @@
     <li><a href="{{ route('services.index') }}" class="text-sm font-medium tracking-wider uppercase text-gray-500 hover:text-yellow-600 transition-colors">Services</a></li>
     <li><a href="{{ route('gallery') }}" class="text-sm font-medium tracking-wider uppercase text-gray-500 hover:text-yellow-600 transition-colors">Gallery</a></li>
     <li><a href="{{ route('contact') }}" class="text-sm font-medium tracking-wider uppercase text-gray-500 hover:text-yellow-600 transition-colors">Contact</a></li>
+    
+    @if(Auth::guard('customer')->check())
+    <li><a href="{{ route('customer.history') }}" class="text-sm font-medium tracking-wider uppercase text-gray-500 hover:text-yellow-600 transition-colors">My Bookings</a></li>
+    @endif
   </ul>
   <div class="flex gap-5 items-center">
     <a href="https://www.instagram.com/twentytwo.salon/" target="_blank" rel="noopener noreferrer" class="text-sm tracking-wider uppercase text-gray-400 hover:text-yellow-600 transition-colors">Instagram</a>
     <a href="https://www.facebook.com/profile.php?id=61562223720806" target="_blank" rel="noopener noreferrer" class="text-sm tracking-wider uppercase text-gray-400 hover:text-yellow-600 transition-colors">Facebook</a>
-    <a href="#" class="text-sm font-medium tracking-wider uppercase text-gray-500 hover:text-yellow-600 transition-colors">Sign In</a>
+    
+    @if(Auth::guard('customer')->check())
+        <form method="POST" action="{{ route('customer.logout') }}" class="inline">
+            @csrf
+            <button type="submit" class="text-sm font-medium tracking-wider uppercase text-gray-500 hover:text-yellow-600 transition-colors bg-transparent border-none cursor-pointer p-0">
+                Sign Out
+            </button>
+        </form>
+    @else
+        <a href="{{ route('customer.login') }}" class="text-sm font-medium tracking-wider uppercase text-gray-500 hover:text-yellow-600 transition-colors">Sign In</a>
+    @endif
   </div>
 </nav>
 
@@ -58,12 +72,12 @@
             </div>
         </div>
         {{-- Yellow accent bar --}}
-        <div style="position:relative; flex:1; display:flex; align-items:center; gap:12px; padding:20px 32px; border-left:1px solid #f3f4f6;">
+        <!-- <div style="position:relative; flex:1; display:flex; align-items:center; gap:12px; padding:20px 32px; border-left:1px solid #f3f4f6;">
             <div style="position:absolute; top:0; left:0; right:0; height:3px; background:#eab308;"></div>
             <div style="font-size:12px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:#9ca3af; flex:1;">
                 <span id="summary-preview" style="color:#111; font-size:13px;">No service selected</span>
             </div>
-        </div>
+        </div> -->
     </div>
 </div>
 
@@ -289,10 +303,10 @@
                             <p style="font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.15em; color:#9ca3af; margin:0;">Total</p>
                             <p id="summary-price" style="font-size:22px; font-weight:900; color:#111; margin:0; letter-spacing:-0.02em;">—</p>
                         </div>
-                        <div style="display:flex; justify-content:space-between; align-items:center;">
-                            <p style="font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.15em; color:#9ca3af; margin:0;">Downpayment Due (50%)</p>
-                            <p id="summary-downpayment" style="font-size:18px; font-weight:900; color:#eab308; margin:0; letter-spacing:-0.02em;">—</p>
-                        </div>
+
+                        <p style="text-align:center; font-size:11px; color:#d1d5db; text-transform:uppercase; letter-spacing:0.1em; margin:0;">
+                            Downpayment optional — pay now or on the day
+                        </p>
                     </div>
                 </div>
 
@@ -302,13 +316,10 @@
                 <button type="button" id="open-payment-modal-btn"
                         onclick="openPaymentModal()"
                         style="width:100%; background:#111; color:#fff; font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:0.3em; padding:22px; border:none; cursor:pointer; transition:all 0.2s; box-shadow:0 8px 32px rgba(0,0,0,0.18); position:relative; overflow:hidden;">
-                    <span style="position:relative; z-index:1;">Book Appointment &rarr;</span>
+                    <span style="position:relative; z-index:1;">Pay Downpayment &amp; Book &rarr;</span>
                     <div style="position:absolute; bottom:0; left:0; right:0; height:3px; background:#eab308;"></div>
                 </button>
 
-                <p style="text-align:center; font-size:11px; color:#d1d5db; text-transform:uppercase; letter-spacing:0.1em; margin:0;">
-                    50% downpayment required to confirm
-                </p>
             </div>
 {{-- ── Payment Modal ── --}}
 <div id="payment-modal" style="display:none; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.6); backdrop-filter:blur(4px); align-items:center; justify-content:center;">
@@ -376,6 +387,13 @@
                     <span id="pay-btn-text">Confirm &amp; Pay &rarr;</span>
                     <div style="position:absolute; bottom:0; left:0; right:0; height:3px; background:#eab308;"></div>
                 </button>
+
+                <p style="text-align:center; margin:8px 0 0;">
+                    <button type="button" onclick="skipPayment()"
+                            style="background:none; border:none; font-size:12px; color:#9ca3af; cursor:pointer; text-decoration:underline; letter-spacing:0.05em;">
+                        Skip — I'll pay on the day
+                    </button>
+                </p>
 
 
             </div>
@@ -492,7 +510,16 @@
     function updateSummary() {
         const serviceRadio = document.querySelector('input[name="service_id"]:checked');
         const stylistRadio = document.querySelector('input[name="stylist_id"]:checked');
-        const datetime     = document.getElementById('appointment-datetime').value;
+        const datetime     = document.getElementById('appointment-datetime')?.value;
+
+        const summaryService = document.getElementById('summary-service');
+        const summaryPrice = document.getElementById('summary-price');
+        const summaryStylist = document.getElementById('summary-stylist');
+        const summaryDatetime = document.getElementById('summary-datetime');
+
+        if (!summaryService || !summaryPrice || !summaryStylist || !summaryDatetime) {
+            return;
+        }
 
         // Service
         if (serviceRadio && serviceData[serviceRadio.value]) {
@@ -500,34 +527,30 @@
             const rawPrice = svc.price.replace(',', '');
             const dp       = Math.ceil(parseFloat(rawPrice) * 0.5);
 
-            document.getElementById('summary-service').textContent      = svc.name;
-            document.getElementById('summary-price').textContent        = '₱' + svc.price;
-            document.getElementById('summary-downpayment').textContent  = '₱' + dp.toLocaleString();
-            document.getElementById('summary-preview').textContent      = svc.name;
+            summaryService.textContent      = svc.name;
+            summaryPrice.textContent        = '₱' + svc.price;
         } else {
-            document.getElementById('summary-service').textContent      = '—';
-            document.getElementById('summary-price').textContent        = '—';
-            document.getElementById('summary-downpayment').textContent  = '—';
-            document.getElementById('summary-preview').textContent      = 'No service selected';
+            summaryService.textContent      = '—';
+            summaryPrice.textContent        = '—';
         }
 
         // Stylist
         if (stylistRadio) {
             const stylistLabel = stylistRadio.closest('label');
             const name = stylistLabel ? stylistLabel.querySelector('.stylist-name')?.textContent.trim() : '—';
-            document.getElementById('summary-stylist').textContent = name || '—';
+            summaryStylist.textContent = name || '—';
         } else {
-            document.getElementById('summary-stylist').textContent = '—';
+            summaryStylist.textContent = '—';
         }
 
         // Datetime
         if (datetime) {
             const d = new Date(datetime);
-            document.getElementById('summary-datetime').textContent =
+            summaryDatetime.textContent =
                 d.toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric' }) + ' · ' +
                 d.toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit' });
         } else {
-            document.getElementById('summary-datetime').textContent = '—';
+            summaryDatetime.textContent = '—';
         }
     }
 
@@ -563,6 +586,7 @@
             firstService.checked = true;
             firstService.dispatchEvent(new Event('change', { bubbles: true }));
             updateStylists(firstService.value);
+            updateSummary();
         }
     }
 
@@ -603,6 +627,14 @@
                     </div>
                     <input type="radio" name="stylist_id" value="${stylist.id}" ${i === 0 ? 'checked' : ''} style="display:none;">
                 `;
+                label.addEventListener('click', () => {
+                    const input = label.querySelector('input[name="stylist_id"]');
+                    if (input) {
+                        input.checked = true;
+                        input.dispatchEvent(new Event('change', { bubbles: true }));
+                        updateSummary();
+                    }
+                });
                 grid.appendChild(label);
             });
 
@@ -725,44 +757,46 @@
     });
     
     function buildTimeSlots(bookedTimes, workingStart, workingEnd) {
-    const select = document.getElementById('time-slots-grid');
-    select.innerHTML = '<option value="">-- Choose a time --</option>';
+        const select = document.getElementById('time-slots-grid');
+        select.innerHTML = '<option value="">-- Choose a time --</option>';
 
-    let cur = new Date('2000-01-01T' + (workingStart || '09:00'));
-    const end = new Date('2000-01-01T' + (workingEnd  || '18:00'));
-    let hasSlots = false;
+        const serviceDurationMinutes = 90;
+        let cur = new Date('2000-01-01T' + (workingStart || '09:00'));
+        const end = new Date('2000-01-01T' + (workingEnd  || '18:00'));
+        const lastAllowedStart = new Date(end.getTime() - serviceDurationMinutes * 60000);
+        let hasSlots = false;
 
-    while (cur < end) {
-        const timeStr = cur.toTimeString().slice(0, 5);
-        const booked  = isTimeSlotBooked(bookedTimes, timeStr);
+        while (cur <= lastAllowedStart) {
+            const timeStr = cur.toTimeString().slice(0, 5);
+            const booked  = isTimeSlotBooked(bookedTimes, timeStr);
 
-        if (!booked) {
-            const option = document.createElement('option');
-            option.value       = timeStr;
-            option.textContent = formatTime(timeStr);
-            select.appendChild(option);
-            hasSlots = true;
+            if (!booked) {
+                const option = document.createElement('option');
+                option.value       = timeStr;
+                option.textContent = formatTime(timeStr);
+                select.appendChild(option);
+                hasSlots = true;
+            }
+            cur.setMinutes(cur.getMinutes() + 30);
         }
-        cur.setMinutes(cur.getMinutes() + 30);
-    }
 
-    if (!hasSlots) {
-        const option = document.createElement('option');
-        option.disabled    = true;
-        option.textContent = 'No available slots for this day';
-        select.appendChild(option);
-    }
+        if (!hasSlots) {
+            const option = document.createElement('option');
+            option.disabled    = true;
+            option.textContent = 'No available slots for this day';
+            select.appendChild(option);
+        }
 
-    document.getElementById('time-selection').style.display = 'block';
-    document.getElementById('appointment-datetime').value   = '';
-    updateSummary();
+        document.getElementById('time-selection').style.display = 'block';
+        document.getElementById('appointment-datetime').value   = '';
+        updateSummary();
     }
 
     document.addEventListener('change', function(e) {
     if (e.target.id === 'time-slots-grid') {
         const timeStr = e.target.value;
         if (selectedDate && timeStr) {
-            document.getElementById('appointment-datetime').value = selectedDate + ' ' + timeStr + ':00';
+            document.getElementById('appointment-datetime').value = selectedDate + 'T' + timeStr + ':00';
         } else {
             document.getElementById('appointment-datetime').value = '';
         }
@@ -811,8 +845,30 @@
         }
     });
 
+    document.addEventListener('click', function(e) {
+        const serviceRow = e.target.closest('.service-row');
+        if (serviceRow) {
+            const input = serviceRow.querySelector('input[name="service_id"]');
+            if (input && !input.checked) {
+                input.checked = true;
+                input.dispatchEvent(new Event('change', { bubbles: true }));
+                updateSummary();
+            }
+        }
+
+        const stylistLabel = e.target.closest('.stylist-label');
+        if (stylistLabel) {
+            const input = stylistLabel.querySelector('input[name="stylist_id"]');
+            if (input && !input.checked) {
+                input.checked = true;
+                input.dispatchEvent(new Event('change', { bubbles: true }));
+                updateSummary();
+            }
+        }
+    });
+
     // ── Init ──
-(function init() {
+function init() {
     const checkedService = document.querySelector('input[name="service_id"]:checked');
     if (checkedService) {
         updateStylists(checkedService.value);
@@ -826,10 +882,16 @@
         }
     }
     updateSummary();
-})();
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+} else {
+    init();
+}
 
 // ── Payment Modal ──
-let currentDownpayment = 0;
+var currentDownpayment = 0;
 
 function openPaymentModal() {
     const service  = document.querySelector('input[name="service_id"]:checked');
@@ -858,6 +920,12 @@ function openPaymentModal() {
 function closePaymentModal() {
     document.getElementById('payment-modal').style.display = 'none';
     document.body.style.overflow = '';
+}
+
+function skipPayment() {
+    document.getElementById('downpayment-amount-input').value = 0;
+    closePaymentModal();
+    document.querySelector('form').submit();
 }
 
 function formatCardNumber(input) {

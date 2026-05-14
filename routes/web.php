@@ -48,6 +48,14 @@ Route::get('/register',  [CustomerAuthController::class, 'showRegister'])->name(
 Route::post('/register', [CustomerAuthController::class, 'register'])->name('customer.register.post');
 Route::post('/logout',   [CustomerAuthController::class, 'logout'])->name('customer.logout');
 
+// Forgot Password Routes
+Route::get('/forgot-password', [CustomerAuthController::class, 'showForgotPassword'])->name('customer.forgot-password');
+Route::post('/forgot-password', [CustomerAuthController::class, 'sendResetCode'])->name('customer.send-reset-code');
+Route::get('/verify-reset-code', [CustomerAuthController::class, 'showResetPassword'])->name('customer.verify-reset-code');
+Route::post('/verify-reset-code', [CustomerAuthController::class, 'verifyResetCode'])->name('customer.verify-reset-code.post');
+Route::get('/new-password', [CustomerAuthController::class, 'showNewPassword'])->name('customer.new-password');
+Route::post('/new-password', [CustomerAuthController::class, 'resetPassword'])->name('customer.reset-password');
+
 /*
 |--------------------------------------------------------------------------
 | Customer Protected Routes (must be logged in)

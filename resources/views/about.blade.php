@@ -34,11 +34,31 @@
            Contact
         </a>
     </li>
+    
+    @if(Auth::guard('customer')->check())
+    <li>
+        <a href="{{ route('customer.history') }}" class="text-sm font-medium tracking-wider uppercase text-gray-500 hover:text-yellow-600 transition-colors no-underline pb-1">
+            My Bookings
+        </a>
+    </li>
+    @endif
   </ul>
 
   <div class="flex gap-5 items-center">
     <a href="https://www.instagram.com/twentytwo.salon/" target="_blank" rel="noopener noreferrer" class="text-sm tracking-wider uppercase text-gray-400 hover:text-yellow-600 transition-colors no-underline">Instagram</a>
     <a href="https://www.facebook.com/profile.php?id=61562223720806" target="_blank" rel="noopener noreferrer" class="text-sm tracking-wider uppercase text-gray-400 hover:text-yellow-600 transition-colors no-underline">Facebook</a>
+    
+    @if(Auth::guard('customer')->check())
+        <form method="POST" action="{{ route('customer.logout') }}" class="inline">
+            @csrf
+            <button type="submit" class="text-sm font-medium tracking-wider uppercase text-gray-500 hover:text-yellow-600 transition-colors bg-transparent border-none cursor-pointer p-0">
+                Sign Out
+            </button>
+        </form>
+    @else
+        <a href="{{ route('customer.login') }}" class="text-sm font-medium tracking-wider uppercase text-gray-500 hover:text-yellow-600 transition-colors no-underline">Sign In</a>
+    @endif
+    
     <a href="{{ route('booknow') }}" class="bg-black hover:bg-yellow-600 text-white text-sm font-bold tracking-wider uppercase px-6 py-3 transition-colors no-underline">Book Now</a>
   </div>
 </nav>
@@ -96,7 +116,7 @@
     </div>
 </section>
 
-{{-- The Creative Team --}}
+<!-- {{-- The Creative Team --}}
 <section style="padding:112px 48px; background:#fafaf9;">
     <div style="max-width:1280px; margin:0 auto;">
         <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:80px; gap:24px; flex-wrap:wrap;">
@@ -165,7 +185,7 @@
             </div>
         </div>
     </div>
-</section>
+</section> -->
 
 {{-- Final CTA --}}
 <section style="padding:128px 48px; background:#000; text-align:center;">
@@ -194,6 +214,11 @@
                 <a href="{{ route('home') }}" style="display:block; font-size:15px; color:#737373; margin-bottom:12px; text-decoration:none;">Home</a>
                 <a href="{{ route('about') }}" style="display:block; font-size:15px; color:#737373; margin-bottom:12px; text-decoration:none;">About</a>
                 <a href="{{ route('services.index') }}" style="display:block; font-size:15px; color:#737373; margin-bottom:12px; text-decoration:none;">Services</a>
+            </div>
+            <div>
+                <h4 style="font-size:12px; letter-spacing:0.12em; text-transform:uppercase; color:#404040; margin-bottom:16px; font-weight:700;">Visit</h4>
+                <p style="font-size:15px; color:#737373; margin-bottom:8px;">Mon – Sun</p>
+                <p style="font-size:15px; color:#737373;">10:00 AM – 10:00 PM</p>
             </div>
         </div>
     </div>

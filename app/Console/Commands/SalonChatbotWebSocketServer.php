@@ -217,7 +217,7 @@ class SalonChatbotWebSocketServer extends Command
         $normalized = strtolower($question);
 
         if ($this->matches($normalized, ['hour', 'open', 'close', 'time', 'schedule'])) {
-            return 'Salon TwentyTwo is open every day from 10:00am to 8:00pm.';
+            return 'Salon TwentyTwo is open every day from 10:00am to 10:00pm.';
         }
 
         if ($this->matches($normalized, ['location', 'address', 'where', 'map', 'pasig'])) {
@@ -229,7 +229,7 @@ class SalonChatbotWebSocketServer extends Command
         }
 
         if ($this->matches($normalized, ['book', 'booking', 'appointment', 'reserve'])) {
-            return 'To book an appointment, click Book Now in the navigation. You can also start with a complimentary consultation.';
+            return 'To book an appointment, click Book Now in the navigation. You can choose your service, stylist, date and time, and optionally pay a downpayment to secure your slot.';
         }
 
         if ($this->matches($normalized, ['service', 'haircut', 'cut', 'colour', 'color', 'style', 'styling', 'bridal', 'event'])) {

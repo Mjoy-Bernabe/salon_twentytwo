@@ -18,7 +18,7 @@
     .salon-chatbot-input { min-width: 0; flex: 1; padding: 11px 12px; border: 1px solid #d1d5db; color: #111; outline: none; }
     .salon-chatbot-input:focus { border-color: #d97706; box-shadow: 0 0 0 3px rgba(217,119,6,0.12); }
     .salon-chatbot-send { padding: 0 15px; background: #d97706; color: #111; font-size: 12px; font-weight: 900; text-transform: uppercase; }
-    .salon-chatbot-toggle { width: 68px; height: 68px; margin-left: auto; background: #111; color: #fff; box-shadow: 0 16px 44px rgba(0,0,0,0.28); font-size: 12px; font-weight: 900; letter-spacing: 0.08em; text-transform: uppercase; }
+    .salon-chatbot-toggle { width: 68px; height: 68px; margin-left: auto; background: #111; color: #fff; box-shadow: 0 16px 44px rgba(0,0,0,0.28); font-size: 26px; font-weight: 900; letter-spacing: 0.08em; text-transform: none; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; }
     @media (max-width: 640px) { .salon-chatbot { right: 16px; bottom: 16px; } }
 </style>
 
@@ -47,7 +47,7 @@
         </form>
     </section>
 
-    <button type="button" class="salon-chatbot-toggle" data-chatbot-toggle>Chat</button>
+    <button type="button" class="salon-chatbot-toggle" data-chatbot-toggle aria-label="Open chatbot">  <img src="https://img.icons8.com/?size=40&id=38977&format=png&color=AB7C39" alt="Chat"></button>
 </div>
 
 <script>
