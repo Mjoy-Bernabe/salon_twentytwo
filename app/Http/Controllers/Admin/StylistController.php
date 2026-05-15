@@ -27,7 +27,7 @@ class StylistController extends Controller
 
     public function create()
     {
-        $services = Service::where('is_promo', false)->get();
+        $services = Service::orderBy('is_promo')->orderBy('service_name')->get();
         return view('admin.stylists.create', compact('services'));    }
 
     public function store(Request $request)
@@ -52,7 +52,7 @@ class StylistController extends Controller
 
     public function edit(Stylist $stylist)
     {
-        $services = Service::where('is_promo', false)->get();
+        $services = Service::orderBy('is_promo')->orderBy('service_name')->get();
         $selectedServices = $stylist->services()->pluck('services.id')->toArray();
 
         return view('admin.stylists.edit', compact('stylist', 'services', 'selectedServices'));

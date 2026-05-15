@@ -20,7 +20,7 @@
       </div>
       <div>
         <label class="mb-2 block text-sm font-medium text-slate-700">Status</label>
-        <select name="status" class="w-full rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 outline-none focus:border-slate-900">
+        <select id="status-filter" name="status" class="w-full rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 outline-none focus:border-slate-900">
           <option value="">All Customers</option>
           <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Active</option>
           <option value="inactive" {{ request('status') === 'inactive' ? 'selected' : '' }}>Inactive</option>
@@ -74,6 +74,14 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
   const toggleCheckboxes = document.querySelectorAll('.toggle-active-checkbox');
+  const statusFilter = document.getElementById('status-filter');
+  const activeFilter = new URLSearchParams(window.location.search).get('status');
+
+  if (statusFilter) {
+    statusFilter.addEventListener('change', function () {
+      document.getElementById('filter-form')?.submit();
+    });
+  }
   
   toggleCheckboxes.forEach(checkbox => {
     checkbox.addEventListener('change', async function() {
@@ -90,12 +98,13 @@ document.addEventListener('DOMContentLoaded', function() {
         
         if (response.ok) {
           const data = await response.json();
-          // Update the visual state
           const row = this.closest('tr');
-          if (data.is_active) {
-            this.checked = true;
-          } else {
-            this.checked = false;
+          this.checked = !!data.is_active;
+
+          if (activeFilter === 'active' && !data.is_active) {
+            row?.remove();
+          } else if (activeFilter === 'inactive' && data.is_active) {
+            row?.remove();
           }
         }
       } catch (error) {

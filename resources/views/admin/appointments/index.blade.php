@@ -76,13 +76,13 @@
                   @csrf
                   <button type="submit" class="rounded-full bg-emerald-500 px-3 py-2 text-xs text-white hover:bg-emerald-600">Confirm</button>
                 </form>
-                <form action="{{ route('admin.appointments.cancel', $appointment) }}" method="POST" class="inline-block">
+                <form action="{{ route('admin.appointments.cancel', $appointment) }}" method="POST" class="inline-block" data-confirm data-confirm-title="Cancel Appointment" data-confirm-message="Cancel appointment for {{ $appointment->customer->name }} on {{ $appointment->appointment_datetime->format('M d, Y H:i') }}?">
                   @csrf
                   <button type="submit" class="rounded-full bg-rose-500 px-3 py-2 text-xs text-white hover:bg-rose-600">Cancel</button>
                 </form>
               @endif
               @if($appointment->status !== 'done' && $appointment->status !== 'cancelled')
-                <form action="{{ route('admin.appointments.done', $appointment) }}" method="POST" class="inline-block">
+                <form action="{{ route('admin.appointments.done', $appointment) }}" method="POST" class="inline-block" data-confirm data-confirm-title="Mark Appointment as Done" data-confirm-message="Mark appointment for {{ $appointment->customer->name }} as done?">
                   @csrf
                   <button type="submit" class="rounded-full bg-blue-500 px-3 py-2 text-xs text-white hover:bg-blue-600">Done</button>
                 </form>

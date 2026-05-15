@@ -105,22 +105,9 @@ class AppointmentController extends Controller
             'service_id' => 'required|exists:services,id',
         ]);
 
-        $service = Service::with(['components.stylists', 'stylists'])->findOrFail($request->service_id);
-        $stylists = $service->stylists;
+        $service = Service::with('stylists')->findOrFail($request->service_id);
 
-        if ($service->is_promo && $service->components->isNotEmpty()) {
-            $componentStylists = $service->components
-                ->flatMap(fn ($component) => $component->stylists)
-                ->unique('id')
-                ->values();
-
-            $stylists = $stylists
-                ->merge($componentStylists)
-                ->unique('id')
-                ->values();
-        }
-
-        return response()->json($stylists);
+        return response()->json($service->stylists->values());
     }
 
     // Get available schedules for a stylist

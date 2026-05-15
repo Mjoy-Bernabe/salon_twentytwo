@@ -41,7 +41,7 @@
             <td class="px-6 py-4">{{ $service->stylists->pluck('name')->join(', ') }}</td>
             <td class="px-6 py-4 space-x-2">
               <a href="{{ route('admin.services.edit', $service) }}" class="rounded-full bg-slate-900 px-3 py-2 text-xs text-white hover:bg-slate-700">Edit</a>
-              <form action="{{ route('admin.services.destroy', $service) }}" method="POST" class="inline-block">
+              <form action="{{ route('admin.services.destroy', $service) }}" method="POST" class="inline-block" data-confirm data-confirm-title="Delete Service" data-confirm-message="Delete '{{ $service->service_name }}'? This action cannot be undone.">
                 @csrf
                 @method('DELETE')
                 <button type="submit" class="rounded-full bg-rose-500 px-3 py-2 text-xs text-white hover:bg-rose-600">Delete</button>

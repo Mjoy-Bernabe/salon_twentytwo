@@ -40,5 +40,61 @@
       </div>
     </main>
   </div>
+
+  <div id="admin-confirm-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/70 p-4">
+    <div class="w-full max-w-md rounded-3xl border border-amber-600/40 bg-[#101010] p-6 shadow-2xl">
+      <h3 id="admin-confirm-title" class="text-lg font-semibold text-amber-400">Confirm Action</h3>
+      <p id="admin-confirm-message" class="mt-2 text-sm text-slate-300">Are you sure you want to continue?</p>
+      <div class="mt-6 flex justify-end gap-3">
+        <button id="admin-confirm-cancel" type="button" class="rounded-full border border-slate-600 bg-transparent px-4 py-2 text-sm font-medium text-slate-300 hover:bg-slate-800">Cancel</button>
+        <button id="admin-confirm-accept" type="button" class="rounded-full border border-amber-500 bg-amber-500 px-4 py-2 text-sm font-semibold text-black hover:bg-amber-400">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const modal = document.getElementById('admin-confirm-modal');
+      const title = document.getElementById('admin-confirm-title');
+      const message = document.getElementById('admin-confirm-message');
+      const cancelBtn = document.getElementById('admin-confirm-cancel');
+      const acceptBtn = document.getElementById('admin-confirm-accept');
+      let pendingForm = null;
+
+      const closeModal = () => {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        pendingForm = null;
+      };
+
+      document.addEventListener('submit', (event) => {
+        const form = event.target;
+        if (!(form instanceof HTMLFormElement)) return;
+        if (!form.matches('[data-confirm]')) return;
+        if (form.dataset.confirmed === '1') return;
+
+        event.preventDefault();
+        pendingForm = form;
+        title.textContent = form.dataset.confirmTitle || 'Confirm Action';
+        message.textContent = form.dataset.confirmMessage || 'Are you sure you want to continue?';
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+      });
+
+      cancelBtn.addEventListener('click', closeModal);
+      modal.addEventListener('click', (event) => {
+        if (event.target === modal) closeModal();
+      });
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') closeModal();
+      });
+
+      acceptBtn.addEventListener('click', () => {
+        if (!pendingForm) return closeModal();
+        pendingForm.dataset.confirmed = '1';
+        pendingForm.submit();
+      });
+    });
+  </script>
 </body>
 </html>

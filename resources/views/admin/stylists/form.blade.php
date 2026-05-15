@@ -15,52 +15,50 @@
   </div>
 
   <div>
-    <p class="mb-2 text-base font-semibold text-slate-900"> Services handled by this stylist</p>
-    
+    <p class="mb-2 text-base font-semibold text-slate-900">Services handled by this stylist</p>
+
     <div class="mb-4 flex gap-2 rounded-2xl border border-slate-200 bg-slate-50 p-4">
-      <input 
-        type="text" 
-        id="service-search" 
-        placeholder="Search and add services..." 
-        class="flex-1 rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 font-medium outline-none focus:border-slate-900"
+      <input
+        type="text"
+        id="service-search"
+        placeholder="Search services..."
+        class="flex-1 rounded-2xl border border-slate-300 bg-white px-4 py-3 font-medium outline-none focus:border-slate-900"
       />
-      <button 
-        type="button" 
-        id="add-service-btn" 
-        class="rounded-2xl bg-slate-900 px-5 py-3 text-white hover:bg-slate-700 transition-colors font-semibold"
-      >Add Service</button>
     </div>
 
-    <div id="selected-services" class="mb-4 grid gap-2 sm:grid-cols-2">
-      @foreach($selectedServices ?? [] as $selectedId)
-        @php
-          $selectedService = collect($services)->firstWhere('id', $selectedId);
-        @endphp
-        @if($selectedService)
-          <div class="flex items-center justify-between rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
-            <span class="font-medium text-slate-900">{{ $selectedService->service_name }}</span>
-            <button 
-              type="button" 
-              class="remove-service text-amber-500 hover:text-amber-400 font-bold"
-              data-service-id="{{ $selectedId }}"
-            >
-              ✕
-            </button>
-            <input type="hidden" name="service_ids[]" value="{{ $selectedId }}" class="service-input" />
-          </div>
-        @endif
-      @endforeach
+    <div class="mb-4 rounded-2xl border border-slate-700 bg-slate-900 p-4">
+      <p class="mb-3 text-sm font-semibold text-white">Selected Services</p>
+      <div id="selected-services" class="grid gap-2 sm:grid-cols-2"></div>
+      <p id="selected-empty" class="text-sm text-slate-300">No services selected yet.</p>
     </div>
 
-    <div id="service-suggestions" class="mb-4 grid gap-2 sm:grid-cols-2"></div>
-
-    <div class="grid gap-2 sm:grid-cols-2">
-      @foreach($services as $service)
-        <label class="flex items-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
-          <input type="checkbox" name="service_ids[]" value="{{ $service->id }}" {{ in_array($service->id, old('service_ids', $selectedServices ?? [])) ? 'checked' : '' }} class="h-4 w-4 rounded border-slate-300 text-amber-500 focus:ring-amber-500 service-checkbox" data-service-id="{{ $service->id }}" data-service-name="{{ $service->service_name }}" />
-          <span>{{ $service->service_name }}</span>
-        </label>
-      @endforeach
+    <div class="rounded-2xl border border-slate-200 bg-white p-4">
+      <p class="mb-3 text-sm font-semibold text-slate-700">Available Services</p>
+      <div id="available-services" class="grid gap-2 sm:grid-cols-2">
+        @foreach($services as $service)
+          @php
+            $checked = in_array($service->id, old('service_ids', $selectedServices ?? []));
+          @endphp
+          <label data-service-item data-service-name="{{ strtolower($service->service_name) }}" class="flex items-center justify-between gap-2 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
+            <span class="flex items-center gap-2">
+              <input
+                type="checkbox"
+                name="service_ids[]"
+                value="{{ $service->id }}"
+                {{ $checked ? 'checked' : '' }}
+                class="h-4 w-4 rounded border-slate-300 text-amber-500 focus:ring-amber-500 service-checkbox"
+                data-service-id="{{ $service->id }}"
+                data-service-name="{{ $service->service_name }}"
+                data-is-promo="{{ $service->is_promo ? '1' : '0' }}"
+              />
+              <span>{{ $service->service_name }}</span>
+            </span>
+            @if($service->is_promo)
+              <span class="rounded-full bg-amber-100 px-2 py-1 text-xs font-semibold text-amber-700">PROMO</span>
+            @endif
+          </label>
+        @endforeach
+      </div>
     </div>
   </div>
 
@@ -68,94 +66,69 @@
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
   const searchInput = document.getElementById('service-search');
-  const addBtn = document.getElementById('add-service-btn');
-  const suggestionsDiv = document.getElementById('service-suggestions');
   const selectedServicesDiv = document.getElementById('selected-services');
-  const allServices = Array.from(document.querySelectorAll('.service-checkbox')).map(cb => ({
-    id: cb.dataset.serviceId,
-    name: cb.dataset.serviceName
-  }));
+  const selectedEmpty = document.getElementById('selected-empty');
+  const serviceItems = Array.from(document.querySelectorAll('[data-service-item]'));
+  const checkboxes = Array.from(document.querySelectorAll('.service-checkbox'));
 
-  function getSelectedServiceIds() {
-    return Array.from(document.querySelectorAll('.service-input')).map(input => input.value);
-  }
+  const escapeHtml = (value) => String(value)
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;');
 
-  function updateSuggestions() {
-    const query = searchInput.value.toLowerCase();
-    suggestionsDiv.innerHTML = '';
+  const renderSelected = () => {
+    const selected = checkboxes.filter((cb) => cb.checked);
+    selectedServicesDiv.innerHTML = '';
 
-    if (!query) return;
+    selected.forEach((checkbox) => {
+      const serviceName = checkbox.dataset.serviceName || '';
+      const isPromo = checkbox.dataset.isPromo === '1';
+      const serviceId = checkbox.dataset.serviceId;
 
-    const selected = getSelectedServiceIds();
-    const suggestions = allServices.filter(s => 
-      s.name.toLowerCase().includes(query) && !selected.includes(s.id)
-    );
-
-    suggestions.forEach(service => {
-      const div = document.createElement('button');
-      div.type = 'button';
-      div.className = 'text-left rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 hover:bg-slate-100';
-      div.textContent = service.name;
-      div.onclick = (e) => {
-        e.preventDefault();
-        addServiceToSelected(service.id, service.name);
-        searchInput.value = '';
-        updateSuggestions();
-      };
-      suggestionsDiv.appendChild(div);
+      const row = document.createElement('div');
+      row.className = 'flex items-center justify-between rounded-2xl border border-slate-600 bg-slate-800 px-4 py-3';
+      row.innerHTML = `
+        <div class="flex items-center gap-2">
+          <span class="font-medium text-white">${escapeHtml(serviceName)}</span>
+          ${isPromo ? '<span class="rounded-full bg-amber-400 px-2 py-1 text-xs font-semibold text-slate-900">PROMO</span>' : ''}
+        </div>
+        <button type="button" data-remove-service="${serviceId}" class="text-sm font-semibold text-amber-300 hover:text-amber-200">Remove</button>
+      `;
+      selectedServicesDiv.appendChild(row);
     });
-  }
 
-  function addServiceToSelected(serviceId, serviceName) {
-    const selected = getSelectedServiceIds();
-    if (selected.includes(serviceId)) return;
+    selectedEmpty.classList.toggle('hidden', selected.length > 0);
+  };
 
-    const div = document.createElement('div');
-    div.className = 'flex items-center justify-between rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3';
-    div.innerHTML = `
-      <span>${serviceName}</span>
-      <button type="button" class="remove-service text-amber-500 hover:text-amber-400" data-service-id="${serviceId}">✕</button>
-      <input type="hidden" name="service_ids[]" value="${serviceId}" class="service-input" />
-    `;
+  const filterAvailable = () => {
+    const query = searchInput.value.trim().toLowerCase();
+    serviceItems.forEach((item) => {
+      const name = item.getAttribute('data-service-name') || '';
+      item.classList.toggle('hidden', Boolean(query) && !name.includes(query));
+    });
+  };
 
-    div.querySelector('.remove-service').onclick = (e) => {
-      e.preventDefault();
-      div.remove();
-    };
+  checkboxes.forEach((checkbox) => {
+    checkbox.addEventListener('change', renderSelected);
+  });
 
-    selectedServicesDiv.appendChild(div);
-
-    // Update checkbox
-    const checkbox = document.querySelector(`[data-service-id="${serviceId}"]`);
-    if (checkbox) checkbox.checked = true;
-  }
-
-  searchInput.addEventListener('input', updateSuggestions);
-  addBtn.addEventListener('click', (e) => {
-    e.preventDefault();
-    const query = searchInput.value.toLowerCase();
-    if (!query) return;
-
-    const selected = getSelectedServiceIds();
-    const matching = allServices.find(s => 
-      s.name.toLowerCase() === query && !selected.includes(s.id)
-    );
-
-    if (matching) {
-      addServiceToSelected(matching.id, matching.name);
-      searchInput.value = '';
-      updateSuggestions();
+  selectedServicesDiv.addEventListener('click', (event) => {
+    const btn = event.target.closest('[data-remove-service]');
+    if (!btn) return;
+    const id = btn.getAttribute('data-remove-service');
+    const checkbox = document.querySelector(`.service-checkbox[data-service-id="${id}"]`);
+    if (checkbox) {
+      checkbox.checked = false;
+      renderSelected();
     }
   });
 
-  // Allow removing services by clicking the remove button
-  document.addEventListener('click', function(e) {
-    if (e.target.classList.contains('remove-service')) {
-      e.preventDefault();
-      e.target.closest('div').remove();
-    }
-  });
+  searchInput.addEventListener('input', filterAvailable);
+
+  renderSelected();
 });
 </script>

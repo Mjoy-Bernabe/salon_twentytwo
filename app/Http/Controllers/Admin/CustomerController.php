@@ -12,9 +12,9 @@ class CustomerController extends Controller
     {
         $query = Customer::query();
 
-        if ($request->has('status') && $request->status !== '') {
-            $isActive = $request->status === 'active' ? true : false;
-            $query->where('is_active', $isActive);
+        $status = strtolower(trim((string) $request->query('status', '')));
+        if (in_array($status, ['active', 'inactive'], true)) {
+            $query->where('is_active', $status === 'active');
         }
 
         if ($request->filled('search')) {

@@ -41,6 +41,7 @@ class ServiceController extends Controller
         $data = $request->validate([
             'service_name' => 'required|string|max:100',
             'price' => 'required|numeric',
+            'estimated_time' => 'nullable|integer|min:1',
             'description' => 'nullable|string',
             'is_promo' => 'required|boolean',
             'stylist_ids' => 'nullable|array',
@@ -52,6 +53,7 @@ class ServiceController extends Controller
         $service = Service::create([
             'service_name' => $data['service_name'],
             'price' => $data['price'],
+            'estimated_time' => $data['estimated_time'] ?? null,
             'description' => $data['description'] ?? null,
             'is_promo' => (bool) $data['is_promo'],
         ]);
@@ -78,6 +80,7 @@ class ServiceController extends Controller
         $data = $request->validate([
             'service_name' => 'required|string|max:100',
             'price' => 'required|numeric',
+            'estimated_time' => 'nullable|integer|min:1',
             'description' => 'nullable|string',
             'is_promo' => 'required|boolean',
             'stylist_ids' => 'nullable|array',
@@ -89,6 +92,7 @@ class ServiceController extends Controller
         $service->update([
             'service_name' => $data['service_name'],
             'price' => $data['price'],
+            'estimated_time' => $data['estimated_time'] ?? null,
             'description' => $data['description'] ?? null,
             'is_promo' => (bool) $data['is_promo'],
         ]);

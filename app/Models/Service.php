@@ -13,11 +13,13 @@ class Service extends Model
         'service_name',
         'description',
         'price',
+        'estimated_time',
         'is_promo',
     ];
 
     protected $casts = [
         'price' => 'decimal:2',
+        'estimated_time' => 'integer',
         'is_promo' => 'boolean',
     ];
 
@@ -33,11 +35,13 @@ class Service extends Model
 
     public function components()
     {
-        return $this->belongsToMany(self::class, 'service_promo', 'promo_id', 'service_id');
+        return $this->belongsToMany(self::class, 'service_promo', 'promo_id', 'service_id')
+            ->withPivot(['estimated_time', 'price']);
     }
 
     public function promos()
     {
-        return $this->belongsToMany(self::class, 'service_promo', 'service_id', 'promo_id');
+        return $this->belongsToMany(self::class, 'service_promo', 'service_id', 'promo_id')
+            ->withPivot(['estimated_time', 'price']);
     }
 }
