@@ -1,5 +1,6 @@
 <div class="space-y-5">
   @php
+    $service = $service ?? null;
     $isPromoForm = old('is_promo', isset($isPromoForm) && $isPromoForm ? 1 : 0);
   @endphp
 
@@ -25,6 +26,29 @@
   <div>
     <label class="mb-2 block text-sm font-medium text-slate-700">Description</label>
     <textarea name="description" rows="4" class="w-full rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 outline-none focus:border-slate-900">{{ old('description', $service->description ?? '') }}</textarea>
+  </div>
+
+  <div>
+    <p class="mb-2 text-sm font-medium text-slate-700">Category</p>
+    <div class="space-y-2">
+      @foreach(['Signature Colour', 'Signature Cut', 'Special Services'] as $categoryOption)
+        <label class="flex items-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
+          <input
+            type="radio"
+            name="category"
+            value="{{ $categoryOption }}"
+            {{ old('category', data_get($service, 'category', '')) === $categoryOption ? 'checked' : '' }}
+            {{ $loop->first ? 'required' : '' }}
+            class="h-4 w-4 accent-amber-500 border-slate-300 focus:ring-amber-500"
+          />
+          <span>{{ $categoryOption }}</span>
+        </label>
+      @endforeach
+
+      @error('category')
+        <p class="mt-2 text-sm text-rose-500">{{ $message }}</p>
+      @enderror
+    </div>
   </div>
 
   <div>
@@ -101,19 +125,13 @@
         const keyword = query.trim().toLowerCase();
         serviceItems.forEach((item) => {
           const name = item.getAttribute('data-service-name') || '';
-          const isMatch = !keyword || name.includes(keyword);
-          item.classList.toggle('hidden', !isMatch);
+          const matches = name.includes(keyword);
+          item.hidden = keyword && !matches;
         });
       };
 
       const renderSuggestions = (query) => {
         const keyword = query.trim().toLowerCase();
-        if (!keyword) {
-          suggestionsBox.classList.add('hidden');
-          suggestionsBox.innerHTML = '';
-          return;
-        }
-
         const topMatches = services
           .filter(service => service.service_name.toLowerCase().includes(keyword))
           .slice(0, 3);

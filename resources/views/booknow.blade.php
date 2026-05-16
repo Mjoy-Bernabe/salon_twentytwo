@@ -229,6 +229,14 @@
                             <button type="button" id="next-month" style="background:#fff; border:1px solid #e5e7eb; width:34px; height:34px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:16px; color:#374151; transition:all 0.15s; border-radius:2px;">&rarr;</button>
                         </div>
 
+                        <div id="working-hours-panel" style="display:none; padding:0 24px 16px; color:#6b7280; font-size:12px;">
+                            <p style="margin:0 0 8px; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.12em; color:#111;">Selected stylist schedule</p>
+                            <div style="display:flex; align-items:center; flex-wrap:wrap; gap:8px;">
+                                <span id="working-hours-stylist" style="font-size:13px; font-weight:800; color:#111;"></span>
+                                <span id="working-hours-text"></span>
+                            </div>
+                        </div>
+
                         {{-- Calendar Grid --}}
                         <div id="calendar-grid" style="display:grid; grid-template-columns:repeat(7,1fr); padding:20px; gap:6px;">
                             <!-- Populated by JS -->
@@ -639,6 +647,10 @@
                 return;
             }
 
+            const preservedStylistId = lastSelectedStylistId && stylists.some(s => s.id == lastSelectedStylistId)
+                ? lastSelectedStylistId
+                : stylists[0].id;
+
             stylists.forEach((stylist, i) => {
                 const label = document.createElement('label');
                 label.className = 'stylist-label';
@@ -654,9 +666,9 @@
                     </div>
                     <span class="stylist-name" style="font-size:13px; font-weight:800; text-transform:uppercase; flex:1; color:#6b7280; letter-spacing:0.05em;">${stylist.name}</span>
                     <div class="stylist-radio-dot" style="width:18px; height:18px; border-radius:50%; border:2px solid #d1d5db; flex-shrink:0; display:flex; align-items:center; justify-content:center; transition:all 0.15s;">
-                        <div class="stylist-radio-dot-inner" style="width:7px; height:7px; border-radius:50%; background:#111; opacity:${i === 0 ? 1 : 0}; transition:opacity 0.15s;"></div>
+                        <div class="stylist-radio-dot-inner" style="width:7px; height:7px; border-radius:50%; background:#111; opacity:${stylist.id == preservedStylistId ? 1 : 0}; transition:opacity 0.15s;"></div>
                     </div>
-                    <input type="radio" name="stylist_id" value="${stylist.id}" ${i === 0 ? 'checked' : ''} style="display:none;">
+                    <input type="radio" name="stylist_id" value="${stylist.id}" ${stylist.id == preservedStylistId ? 'checked' : ''} style="display:none;">
                 `;
                 label.addEventListener('click', () => {
                     const input = label.querySelector('input[name="stylist_id"]');
@@ -669,9 +681,10 @@
                 grid.appendChild(label);
             });
 
+            lastSelectedStylistId = preservedStylistId;
             document.getElementById('schedule-selection').style.display = 'block';
             activateStepTab(3);
-            updateSchedules(stylists[0].id);
+            updateSchedules(preservedStylistId);
             updateSummary();
         })
         .catch(err => console.error('Stylists error:', err));
@@ -695,6 +708,7 @@
     let currentMonth     = new Date().getMonth() + 1;
     let currentYear      = new Date().getFullYear();
     let selectedDate     = null;
+    let lastSelectedStylistId = null;
 
     function updateSchedules(stylistId) {
         if (!stylistId) {
@@ -705,6 +719,8 @@
         selectedDate     = null;
         document.getElementById('time-selection').style.display = 'none';
         document.getElementById('appointment-datetime').value   = '';
+        const workingPanel = document.getElementById('working-hours-panel');
+        if (workingPanel) workingPanel.style.display = 'none';
         loadCalendar();
     }
 
@@ -784,9 +800,29 @@
         const bookedTimes   = JSON.parse(el.dataset.bookedTimes  || '[]');
         const workingStart  = el.dataset.workingStart || '09:00';
         const workingEnd    = el.dataset.workingEnd   || '18:00';
+        updateWorkingHoursPanel(workingStart, workingEnd);
         buildTimeSlots(bookedTimes, workingStart, workingEnd);
     });
     
+    function updateWorkingHoursPanel(workingStart, workingEnd) {
+        const panel = document.getElementById('working-hours-panel');
+        const stylistNameEl = document.getElementById('working-hours-stylist');
+        const workingText = document.getElementById('working-hours-text');
+
+        const stylistName = document.querySelector('input[name="stylist_id"]:checked')
+            ?.closest('label')
+            ?.querySelector('.stylist-name')
+            ?.textContent
+            ?.trim() || '';
+
+        stylistNameEl.textContent = stylistName ? `${stylistName} •` : '';
+        workingText.textContent = workingStart && workingEnd
+            ? `${formatTime(workingStart)} – ${formatTime(workingEnd)}`
+            : 'No working hours available';
+
+        if (panel) panel.style.display = 'block';
+    }
+
     function buildTimeSlots(bookedTimes, workingStart, workingEnd) {
         const select = document.getElementById('time-slots-grid');
         select.innerHTML = '<option value="">-- Choose a time --</option>';
@@ -877,6 +913,7 @@
             updateSummary();
         }
         if (e.target.name === 'stylist_id') {
+            lastSelectedStylistId = e.target.value;
             updateSchedules(e.target.value);
             updateSummary();
         }
