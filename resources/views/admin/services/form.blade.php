@@ -32,15 +32,18 @@
     <p class="mb-2 text-sm font-medium text-slate-700">Category</p>
     <div class="space-y-2">
       @foreach(['Signature Colour', 'Signature Cut', 'Special Services'] as $categoryOption)
-        <label class="flex items-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
+        <label class="category-option relative flex cursor-pointer items-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
           <input
             type="radio"
             name="category"
             value="{{ $categoryOption }}"
             {{ old('category', data_get($service, 'category', '')) === $categoryOption ? 'checked' : '' }}
             {{ $loop->first ? 'required' : '' }}
-            class="h-4 w-4 accent-amber-500 border-slate-300 focus:ring-amber-500"
+            class="category-radio absolute inset-0 opacity-0 cursor-pointer"
           />
+          <span class="flex h-5 w-5 items-center justify-center rounded-full border-2 border-[#d4af37]">
+            <span class="category-dot h-2.5 w-2.5 rounded-full bg-[#d4af37] opacity-0"></span>
+          </span>
           <span>{{ $categoryOption }}</span>
         </label>
       @endforeach
@@ -50,6 +53,27 @@
       @enderror
     </div>
   </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const radios = document.querySelectorAll('.category-radio');
+
+      const syncCategoryDots = () => {
+        radios.forEach((radio) => {
+          const label = radio.closest('.category-option');
+          const dot = label?.querySelector('.category-dot');
+          if (!dot) return;
+          dot.style.opacity = radio.checked ? '1' : '0';
+        });
+      };
+
+      radios.forEach((radio) => {
+        radio.addEventListener('change', syncCategoryDots);
+      });
+
+      syncCategoryDots();
+    });
+  </script>
 
   <div>
     <p class="mb-2 text-sm font-medium text-slate-700">Assign stylists</p>

@@ -99,7 +99,7 @@
             </div>
         @endif
 
-        <form method="POST" action="{{ route('appointments.store') }}" style="display:grid; grid-template-columns:200px 1fr 360px; gap:28px; align-items:start;">
+        <form id="booking-form" method="POST" action="{{ route('appointments.store') }}" style="display:grid; grid-template-columns:200px 1fr 360px; gap:28px; align-items:start;">
             @csrf
 
             @php
@@ -1000,7 +1000,7 @@ function closePaymentModal() {
 function skipPayment() {
     document.getElementById('downpayment-amount-input').value = 0;
     closePaymentModal();
-    document.querySelector('form').submit();
+    document.getElementById('booking-form').submit();
 }
 
 function formatCardNumber(input) {
@@ -1049,7 +1049,7 @@ function confirmPayment() {
         // Set downpayment value and submit the real form
         document.getElementById('downpayment-amount-input').value = currentDownpayment;
         closePaymentModal();
-        document.querySelector('form').submit();
+        document.getElementById('booking-form').submit();
     }, 1500);
 }
 
