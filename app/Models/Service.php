@@ -14,6 +14,7 @@ class Service extends Model
         'description',
         'price',
         'estimated_time',
+        'category',
         'is_promo',
     ];
 

@@ -99,7 +99,7 @@
             </div>
         @endif
 
-        <form id="appointment-form" method="POST" action="{{ route('appointments.store') }}" style="display:grid; grid-template-columns:200px 1fr 360px; gap:28px; align-items:start;">
+        <form method="POST" action="{{ route('appointments.store') }}" style="display:grid; grid-template-columns:200px 1fr 360px; gap:28px; align-items:start;">
             @csrf
 
             @php
@@ -185,7 +185,7 @@
                             </div>
                             <div style="display:flex; flex-direction:column; align-items:flex-end; gap:6px; flex-shrink:0;">
                                 <span style="font-size:17px; font-weight:900; letter-spacing:-0.02em;">&#8369;{{ number_format($service->price, 0) }}</span>
-                                <span style="font-size:10px; color:#d1d5db; text-transform:uppercase; letter-spacing:0.15em;">90 min</span>
+                                <span class="service-duration" data-duration="{{ $service->estimated_time }}" style="font-size:10px; color:#d1d5db; text-transform:uppercase; letter-spacing:0.15em;">{{ floor($service->estimated_time / 60) }}{{ $service->estimated_time % 60 ? ' h ' . ($service->estimated_time % 60) . ' min' : ' h' }}</span>
                             </div>
                             <div class="radio-dot" style="width:20px; height:20px; border-radius:50%; border:2px solid #d1d5db; flex-shrink:0; display:flex; align-items:center; justify-content:center; transition:all 0.15s;">
                                 <div style="width:8px; height:8px; border-radius:50%; background:#111; opacity:0; transition:opacity 0.15s;" class="radio-dot-inner"></div>
@@ -501,7 +501,8 @@
         @foreach($services as $service)
             serviceData[{{ $service->id }}] = {
                 name: '{{ addslashes($service->service_name) }}',
-                price: '{{ number_format($service->price, 0) }}'
+                price: '{{ number_format($service->price, 0) }}',
+                estimated_time: {{ $service->estimated_time }}
             };
         @endforeach
     @endforeach
@@ -529,6 +530,9 @@
 
             summaryService.textContent      = svc.name;
             summaryPrice.textContent        = '₱' + svc.price;
+            
+            // Update duration display
+            updateServiceDurationDisplay();
         } else {
             summaryService.textContent      = '—';
             summaryPrice.textContent        = '—';
@@ -552,6 +556,32 @@
         } else {
             summaryDatetime.textContent = '—';
         }
+    }
+
+    // ── Update service duration display ──
+    function updateServiceDurationDisplay() {
+        const serviceRadio = document.querySelector('input[name="service_id"]:checked');
+        const serviceRows = document.querySelectorAll('.service-row');
+        
+        serviceRows.forEach(row => {
+            const durationSpan = row.querySelector('.service-duration');
+            if (durationSpan) {
+                const serviceId = row.querySelector('input[name="service_id"]').value;
+                if (serviceData[serviceId]) {
+                    const minutes = serviceData[serviceId].estimated_time;
+                    const hours = Math.floor(minutes / 60);
+                    const mins = minutes % 60;
+                    
+                    if (hours > 0 && mins > 0) {
+                        durationSpan.textContent = hours + ' h ' + mins + ' min';
+                    } else if (hours > 0) {
+                        durationSpan.textContent = hours + ' h';
+                    } else {
+                        durationSpan.textContent = mins + ' min';
+                    }
+                }
+            }
+        });
     }
 
     // ── Category switching ──
@@ -586,6 +616,7 @@
             firstService.checked = true;
             firstService.dispatchEvent(new Event('change', { bubbles: true }));
             updateStylists(firstService.value);
+            updateServiceDurationDisplay();
             updateSummary();
         }
     }
@@ -760,7 +791,13 @@
         const select = document.getElementById('time-slots-grid');
         select.innerHTML = '<option value="">-- Choose a time --</option>';
 
-        const serviceDurationMinutes = 90;
+        // Get the selected service's estimated time
+        const serviceRadio = document.querySelector('input[name="service_id"]:checked');
+        let serviceDurationMinutes = 90; // Default fallback
+        if (serviceRadio && serviceData[serviceRadio.value]) {
+            serviceDurationMinutes = serviceData[serviceRadio.value].estimated_time || 90;
+        }
+
         let cur = new Date('2000-01-01T' + (workingStart || '09:00'));
         const end = new Date('2000-01-01T' + (workingEnd  || '18:00'));
         const lastAllowedStart = new Date(end.getTime() - serviceDurationMinutes * 60000);
@@ -768,7 +805,7 @@
 
         while (cur <= lastAllowedStart) {
             const timeStr = cur.toTimeString().slice(0, 5);
-            const booked  = isTimeSlotBooked(bookedTimes, timeStr);
+            const booked  = isTimeSlotBooked(bookedTimes, timeStr, serviceDurationMinutes);
 
             if (!booked) {
                 const option = document.createElement('option');
@@ -811,9 +848,9 @@
         return `${hr}:${m.toString().padStart(2, '0')} ${ampm}`;
     }
 
-    function isTimeSlotBooked(bookedTimes, timeStr) {
+    function isTimeSlotBooked(bookedTimes, timeStr, serviceDurationMinutes = 90) {
         const sel    = new Date('2000-01-01T' + timeStr);
-        const selEnd = new Date(sel.getTime() + 90 * 60000);
+        const selEnd = new Date(sel.getTime() + serviceDurationMinutes * 60000);
         for (const b of bookedTimes) {
             const bStart = new Date('2000-01-01T' + b.start);
             const bEnd   = new Date('2000-01-01T' + b.end);
@@ -881,6 +918,7 @@ function init() {
             activateStepTab(2);
         }
     }
+    updateServiceDurationDisplay();
     updateSummary();
 }
 
@@ -925,7 +963,7 @@ function closePaymentModal() {
 function skipPayment() {
     document.getElementById('downpayment-amount-input').value = 0;
     closePaymentModal();
-    document.getElementById('appointment-form').submit();
+    document.querySelector('form').submit();
 }
 
 function formatCardNumber(input) {
@@ -974,7 +1012,7 @@ function confirmPayment() {
         // Set downpayment value and submit the real form
         document.getElementById('downpayment-amount-input').value = currentDownpayment;
         closePaymentModal();
-        document.getElementById('appointment-form').submit();
+        document.querySelector('form').submit();
     }, 1500);
 }
 

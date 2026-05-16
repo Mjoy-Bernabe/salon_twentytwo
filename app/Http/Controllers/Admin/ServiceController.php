@@ -43,6 +43,7 @@ class ServiceController extends Controller
             'price' => 'required|numeric',
             'estimated_time' => 'nullable|integer|min:1',
             'description' => 'nullable|string',
+            'category' => ['required', Rule::in(['Signature Colour', 'Signature Cut', 'Special Services'])],
             'is_promo' => 'required|boolean',
             'stylist_ids' => 'nullable|array',
             'stylist_ids.*' => 'exists:stylists,id',
@@ -55,6 +56,7 @@ class ServiceController extends Controller
             'price' => $data['price'],
             'estimated_time' => $data['estimated_time'] ?? null,
             'description' => $data['description'] ?? null,
+            'category' => $data['category'],
             'is_promo' => (bool) $data['is_promo'],
         ]);
 
@@ -82,6 +84,7 @@ class ServiceController extends Controller
             'price' => 'required|numeric',
             'estimated_time' => 'nullable|integer|min:1',
             'description' => 'nullable|string',
+            'category' => ['required', Rule::in(['Signature Colour', 'Signature Cut', 'Special Services'])],
             'is_promo' => 'required|boolean',
             'stylist_ids' => 'nullable|array',
             'stylist_ids.*' => 'exists:stylists,id',
@@ -94,6 +97,7 @@ class ServiceController extends Controller
             'price' => $data['price'],
             'estimated_time' => $data['estimated_time'] ?? null,
             'description' => $data['description'] ?? null,
+            'category' => $data['category'],
             'is_promo' => (bool) $data['is_promo'],
         ]);
 

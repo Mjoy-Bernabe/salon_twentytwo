@@ -17,8 +17,9 @@
     <li><a href="{{ route('about') }}" class="text-sm font-medium tracking-wider uppercase text-gray-500 hover:text-yellow-600 transition-colors">About</a></li>
     <li><a href="{{ route('services.index') }}" class="text-sm font-medium tracking-wider uppercase text-gray-500 hover:text-yellow-600 transition-colors">Services</a></li>
     <li><a href="{{ route('gallery') }}" class="text-sm font-medium tracking-wider uppercase text-gray-500 hover:text-yellow-600 transition-colors">Gallery</a></li>
-    <li><a href="{{ route('contact') }}" class="text-sm font-medium tracking-wider uppercase text-gray-500 hover:text-yellow-600 transition-colors">Contact</a></li>
-    
+    <li><a href="{{ route('contact') }}"  class="text-sm tracking-wider uppercase no-underline transition-all pb-1 
+                {{ Route::is('contact') ? 'text-yellow-600 font-bold border-b-2 border-yellow-600' : 'text-gray-500 font-medium hover:text-yellow-600' }}">
+                    Contact</a></li>    
     @if(Auth::guard('customer')->check())
     <li><a href="{{ route('customer.history') }}" class="text-sm font-medium tracking-wider uppercase text-gray-500 hover:text-yellow-600 transition-colors">My Bookings</a></li>
     @endif
