@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\AppointmentBooked;
 use App\Models\Appointment;
 use App\Models\Service;
 use App\Models\Stylist;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Carbon\Carbon;
 
 class AppointmentController extends Controller
@@ -47,6 +49,15 @@ class AppointmentController extends Controller
             'appointment_datetime' => 'required|date|after:now',
             'downpayment_amount' => 'nullable|numeric|min:0',
         ]);
+
+        $service = Service::findOrFail($request->service_id);
+        $downpaymentAmount = (float) $request->input('downpayment_amount', 0);
+
+        if ($downpaymentAmount > (float) $service->price) {
+            return back()
+                ->withErrors(['downpayment_amount' => 'Downpayment cannot be greater than the selected service total.'])
+                ->withInput();
+        }
 
         // Additional validation: check if the time slot is still available
         $appointmentDateTime = \Carbon\Carbon::parse($request->appointment_datetime);
@@ -90,10 +101,14 @@ class AppointmentController extends Controller
             'stylist_id'           => $request->stylist_id,
             'appointment_datetime' => $appointmentDateTime,
             'status'               => 'pending',
-            'downpayment_amount' => $request->input('downpayment_amount', 0)
+            'downpayment_amount'   => $downpaymentAmount,
         ]);
 
         $appointment->services()->attach($request->service_id);
+        $appointment->load(['customer', 'stylist', 'services']);
+
+        Mail::to($appointment->customer->email)
+            ->send(new AppointmentBooked($appointment));
 
         return redirect()->back()->with('success', 'Appointment booked successfully!');
     }

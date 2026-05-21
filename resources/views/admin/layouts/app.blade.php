@@ -23,7 +23,8 @@
         <a href="{{ route('admin.services.index') }}" class="block rounded-lg px-4 py-3 transition hover:bg-[#171717] hover:text-amber-500 {{ request()->routeIs('admin.services.*') ? 'bg-[#171717] text-amber-500 ring-1 ring-amber-600/40' : '' }}">Services</a>
         <a href="{{ route('admin.stylists.index') }}" class="block rounded-lg px-4 py-3 transition hover:bg-[#171717] hover:text-amber-500 {{ request()->routeIs('admin.stylists.*') ? 'bg-[#171717] text-amber-500 ring-1 ring-amber-600/40' : '' }}">Stylists</a>
         <a href="{{ route('admin.customers.index') }}" class="block rounded-lg px-4 py-3 transition hover:bg-[#171717] hover:text-amber-500 {{ request()->routeIs('admin.customers.*') ? 'bg-[#171717] text-amber-500 ring-1 ring-amber-600/40' : '' }}">Customers</a>
-        <a href="{{ route('admin.appointments.index') }}" class="block rounded-lg px-4 py-3 transition hover:bg-[#171717] hover:text-amber-500 {{ request()->routeIs('admin.appointments.*') ? 'bg-[#171717] text-amber-500 ring-1 ring-amber-600/40' : '' }}">Appointments</a>
+        <a href="{{ route('admin.appointments.index') }}" class="block rounded-lg px-4 py-3 transition hover:bg-[#171717] hover:text-amber-500 {{ request()->routeIs('admin.appointments.index', 'admin.appointments.create', 'admin.appointments.edit', 'admin.appointments.show') ? 'bg-[#171717] text-amber-500 ring-1 ring-amber-600/40' : '' }}">Appointments</a>
+        <a href="{{ route('admin.appointments.receipts') }}" class="block rounded-lg px-4 py-3 transition hover:bg-[#171717] hover:text-amber-500 {{ request()->routeIs('admin.appointments.receipts') ? 'bg-[#171717] text-amber-500 ring-1 ring-amber-600/40' : '' }}">Appointment History</a>
       </nav>
 
       <div class="mt-12 border-t border-slate-800 pt-6">

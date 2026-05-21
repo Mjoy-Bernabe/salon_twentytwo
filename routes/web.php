@@ -114,6 +114,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('stylists-schedule/{id}', [AdminStylistController::class, 'updateSchedule'])->name('stylists-schedule.update');
         Route::delete('stylists-schedule/{id}', [AdminStylistController::class, 'deleteSchedule'])->name('stylists-schedule.delete');
 
+        Route::get('appointments/receipt-history', [AdminAppointmentController::class, 'receiptHistory'])->name('appointments.receipts');
         Route::resource('appointments', AdminAppointmentController::class);
         Route::post('appointments/{appointment}/confirm', [AdminAppointmentController::class, 'confirm'])->name('appointments.confirm');
         Route::post('appointments/{appointment}/cancel', [AdminAppointmentController::class, 'cancel'])->name('appointments.cancel');

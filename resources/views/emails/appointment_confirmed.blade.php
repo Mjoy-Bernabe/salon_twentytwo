@@ -67,21 +67,21 @@
         <table width="100%" cellpadding="0" cellspacing="0" style="background:#fafaf9; border:1px solid #e5e7eb; margin-bottom:24px;">
             <tr style="border-bottom:1px solid #f3f4f6;">
                 <td style="padding:12px 24px; font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:0.12em; color:#9ca3af;">Total</td>
-                <td style="padding:12px 24px; font-size:15px; font-weight:900; color:#111; text-align:right;">&#8369;{{ number_format($total, 0) }}</td>
+                <td style="padding:12px 24px; font-size:15px; font-weight:900; color:#111; text-align:right;">&#8369;{{ number_format($total, 2) }}</td>
             </tr>
             @if($paid > 0)
             <tr style="border-bottom:1px solid #f3f4f6;">
-                <td style="padding:12px 24px; font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:0.12em; color:#9ca3af;">Downpayment Paid (50%)</td>
-                <td style="padding:12px 24px; font-size:15px; font-weight:900; color:#059669; text-align:right;">&#8369;{{ number_format($paid, 0) }}</td>
+                <td style="padding:12px 24px; font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:0.12em; color:#9ca3af;">Downpayment Paid</td>
+                <td style="padding:12px 24px; font-size:15px; font-weight:900; color:#059669; text-align:right;">&#8369;{{ number_format($paid, 2) }}</td>
             </tr>
             <tr>
                 <td style="padding:12px 24px; font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:0.12em; color:#92400e; background:#fefce8;">Remaining Balance Due</td>
-                <td style="padding:12px 24px; font-size:20px; font-weight:900; color:#111; text-align:right; background:#fefce8;">&#8369;{{ number_format($remaining, 0) }}</td>
+                <td style="padding:12px 24px; font-size:20px; font-weight:900; color:#111; text-align:right; background:#fefce8;">&#8369;{{ number_format($remaining, 2) }}</td>
             </tr>
             @else
             <tr>
                 <td style="padding:12px 24px; font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:0.12em; color:#92400e; background:#fefce8;">Full Amount Due on the Day</td>
-                <td style="padding:12px 24px; font-size:20px; font-weight:900; color:#111; text-align:right; background:#fefce8;">&#8369;{{ number_format($total, 0) }}</td>
+                <td style="padding:12px 24px; font-size:20px; font-weight:900; color:#111; text-align:right; background:#fefce8;">&#8369;{{ number_format($total, 2) }}</td>
             </tr>
             @endif
         </table>

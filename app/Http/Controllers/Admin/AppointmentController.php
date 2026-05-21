@@ -8,7 +8,9 @@ use App\Models\Customer;
 use App\Models\Service;
 use App\Models\Stylist;
 use Illuminate\Http\Request;
+use App\Mail\AppointmentCancelled;
 use App\Mail\AppointmentConfirmed;
+use App\Mail\AppointmentReceipt;
 use Illuminate\Support\Facades\Mail;
 
 class AppointmentController extends Controller
@@ -16,6 +18,8 @@ class AppointmentController extends Controller
     public function index(Request $request)
     {
         $query = Appointment::with(['customer', 'stylist', 'services']);
+
+        $query->where('status', '!=', 'done');
 
         if ($request->filled('status')) {
             $query->where('status', $request->status);
@@ -34,8 +38,32 @@ class AppointmentController extends Controller
             });
         }
 
-        $appointments = $query->paginate(10)->withQueryString();
+        $appointments = $query->latest('appointment_datetime')->paginate(10)->withQueryString();
         return view('admin.appointments.index', compact('appointments'));
+    }
+
+    public function receiptHistory(Request $request)
+    {
+        $query = Appointment::with(['customer', 'stylist', 'services'])
+            ->where('status', 'done')
+            ->latest('updated_at');
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->whereHas('customer', function ($customerQuery) use ($search) {
+                    $customerQuery->where('name', 'like', '%' . $search . '%')
+                        ->orWhere('email', 'like', '%' . $search . '%');
+                })->orWhereHas('stylist', function ($stylistQuery) use ($search) {
+                    $stylistQuery->where('name', 'like', '%' . $search . '%')
+                        ->orWhere('email', 'like', '%' . $search . '%');
+                });
+            });
+        }
+
+        $appointments = $query->paginate(10)->withQueryString();
+
+        return view('admin.appointments.receipts', compact('appointments'));
     }
 
     public function create()
@@ -58,6 +86,13 @@ class AppointmentController extends Controller
             'service_ids' => 'required|array',
             'service_ids.*' => 'exists:services,id',
         ]);
+
+        $servicesTotal = Service::whereIn('id', $data['service_ids'])->sum('price');
+        if ((float) $data['downpayment_amount'] > (float) $servicesTotal) {
+            return back()
+                ->withErrors(['downpayment_amount' => 'Downpayment cannot be greater than the selected services total.'])
+                ->withInput();
+        }
 
         $appointment = Appointment::create([
             'customer_id' => $data['customer_id'],
@@ -93,6 +128,13 @@ class AppointmentController extends Controller
             'service_ids' => 'required|array',
             'service_ids.*' => 'exists:services,id',
         ]);
+
+        $servicesTotal = Service::whereIn('id', $data['service_ids'])->sum('price');
+        if ((float) $data['downpayment_amount'] > (float) $servicesTotal) {
+            return back()
+                ->withErrors(['downpayment_amount' => 'Downpayment cannot be greater than the selected services total.'])
+                ->withInput();
+        }
 
         $appointment->update([
             'customer_id' => $data['customer_id'],
@@ -131,12 +173,29 @@ class AppointmentController extends Controller
     public function cancel(Appointment $appointment)
     {
         $appointment->update(['status' => 'cancelled']);
-        return redirect()->route('admin.appointments.index')->with('success', 'Appointment cancelled.');
+        $appointment->load(['customer', 'stylist', 'services']);
+
+        Mail::to($appointment->customer->email)
+            ->send(new AppointmentCancelled($appointment));
+
+        return redirect()->route('admin.appointments.index')->with('success', 'Appointment cancelled and email sent.');
     }
 
     public function markDone(Appointment $appointment)
     {
-        $appointment->update(['status' => 'done']);
-        return redirect()->route('admin.appointments.index')->with('success', 'Appointment marked as done.');
+        $appointment->load(['customer', 'stylist', 'services']);
+        $total = $appointment->services->sum('price');
+
+        $appointment->update([
+            'status' => 'done',
+            'downpayment_amount' => $total,
+        ]);
+
+        $appointment->refresh()->load(['customer', 'stylist', 'services']);
+
+        Mail::to($appointment->customer->email)
+            ->send(new AppointmentReceipt($appointment));
+
+        return redirect()->route('admin.appointments.receipts')->with('success', 'Appointment marked as done and receipt email sent.');
     }
 }

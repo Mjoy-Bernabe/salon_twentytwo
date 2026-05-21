@@ -318,13 +318,22 @@
                     </div>
                 </div>
 
-                {{-- Hidden input to carry downpayment amount --}}
-                <input type="hidden" name="downpayment_amount" id="downpayment-amount-input">
+                <div style="background:#fff; border:1px solid #e5e7eb; box-shadow:0 1px 4px rgba(0,0,0,0.06); padding:20px 24px;">
+                    <label for="downpayment-amount-input" style="font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.15em; color:#9ca3af; display:block; margin-bottom:8px;">Downpayment</label>
+                    <input type="number" name="downpayment_amount" id="downpayment-amount-input" min="0" step="0.01" value="{{ old('downpayment_amount', 0) }}"
+                           oninput="handleDownpaymentInput()"
+                           style="width:100%; border:1px solid #e5e7eb; background:#fafaf9; padding:12px 14px; font-size:18px; font-weight:900; color:#111; outline:none; box-sizing:border-box;">
+                    <div style="display:flex; justify-content:space-between; gap:12px; margin-top:12px;">
+                        <span style="font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.15em; color:#9ca3af;">Amount Due</span>
+                        <span id="summary-amount-due" style="font-size:14px; font-weight:900; color:#111;">-</span>
+                    </div>
+                    <p style="font-size:11px; color:#9ca3af; line-height:1.5; margin:10px 0 0;">Enter any amount, or leave 0 to pay on the day.</p>
+                </div>
 
                 <button type="button" id="open-payment-modal-btn"
                         onclick="openPaymentModal()"
                         style="width:100%; background:#111; color:#fff; font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:0.3em; padding:22px; border:none; cursor:pointer; transition:all 0.2s; box-shadow:0 8px 32px rgba(0,0,0,0.18); position:relative; overflow:hidden;">
-                    <span style="position:relative; z-index:1;">Pay Downpayment &amp; Book &rarr;</span>
+                    <span id="booking-submit-text" style="position:relative; z-index:1;">Book Appointment &amp; Pay Later &rarr;</span>
                     <div style="position:absolute; bottom:0; left:0; right:0; height:3px; background:#eab308;"></div>
                 </button>
 
@@ -337,7 +346,7 @@
         <div style="background:#111; padding:24px 28px; display:flex; justify-content:space-between; align-items:center;">
             <div>
                 <p style="font-size:10px; font-weight:800; letter-spacing:0.2em; text-transform:uppercase; color:#eab308; margin:0 0 4px;">Secure Checkout</p>
-                <p style="font-size:16px; font-weight:900; color:#fff; margin:0; letter-spacing:-0.01em;">Downpayment (50%)</p>
+                <p style="font-size:16px; font-weight:900; color:#fff; margin:0; letter-spacing:-0.01em;">Downpayment</p>
             </div>
             <button type="button" onclick="closePaymentModal()" style="background:none; border:none; color:#9ca3af; font-size:22px; cursor:pointer; line-height:1; padding:4px;">&times;</button>
         </div>
@@ -515,6 +524,18 @@
         @endforeach
     @endforeach
 
+    function handleDownpaymentInput() {
+        const input = document.getElementById('downpayment-amount-input');
+        if (!input) return;
+
+        const max = parseFloat(input.max || 0) || 0;
+        let value = parseFloat(input.value || 0) || 0;
+
+        if (value < 0) input.value = 0;
+        if (max > 0 && value > max) input.value = max;
+        updateSummary();
+    }
+
     // ── Summary updater ──
     function updateSummary() {
         const serviceRadio = document.querySelector('input[name="service_id"]:checked');
@@ -525,6 +546,9 @@
         const summaryPrice = document.getElementById('summary-price');
         const summaryStylist = document.getElementById('summary-stylist');
         const summaryDatetime = document.getElementById('summary-datetime');
+        const summaryAmountDue = document.getElementById('summary-amount-due');
+        const downpaymentInput = document.getElementById('downpayment-amount-input');
+        const submitText = document.getElementById('booking-submit-text');
 
         if (!summaryService || !summaryPrice || !summaryStylist || !summaryDatetime) {
             return;
@@ -533,17 +557,34 @@
         // Service
         if (serviceRadio && serviceData[serviceRadio.value]) {
             const svc      = serviceData[serviceRadio.value];
-            const rawPrice = svc.price.replace(',', '');
-            const dp       = Math.ceil(parseFloat(rawPrice) * 0.5);
+            const rawPrice = svc.price.replace(/,/g, '');
+            const total    = parseFloat(rawPrice) || 0;
+            let paid       = parseFloat(downpaymentInput?.value || 0) || 0;
+
+            if (downpaymentInput) {
+                downpaymentInput.max = total;
+                if (paid > total) {
+                    paid = total;
+                    downpaymentInput.value = total.toFixed(2);
+                }
+            }
 
             summaryService.textContent      = svc.name;
             summaryPrice.textContent        = '₱' + svc.price;
+            if (summaryAmountDue) {
+                summaryAmountDue.textContent = '₱' + Math.max(total - paid, 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            }
+            if (submitText) {
+                submitText.textContent = paid > 0 ? 'Pay Downpayment & Book →' : 'Book Appointment & Pay Later →';
+            }
             
             // Update duration display
             updateServiceDurationDisplay();
         } else {
             summaryService.textContent      = '—';
             summaryPrice.textContent        = '—';
+            if (summaryAmountDue) summaryAmountDue.textContent = '-';
+            if (submitText) submitText.textContent = 'Book Appointment & Pay Later →';
         }
 
         // Stylist
@@ -977,8 +1018,25 @@ function openPaymentModal() {
     if (!stylist) { alert('Please select a stylist.'); return; }
     if (!datetime) { alert('Please select a date and time.'); return; }
 
-    const priceRaw = serviceData[service.value]?.price?.replace(',', '') || '0';
-    currentDownpayment = Math.ceil(parseFloat(priceRaw) * 0.5);
+    const priceRaw = serviceData[service.value]?.price?.replace(/,/g, '') || '0';
+    const total = parseFloat(priceRaw) || 0;
+    const downpaymentInput = document.getElementById('downpayment-amount-input');
+    currentDownpayment = parseFloat(downpaymentInput?.value || 0) || 0;
+
+    if (currentDownpayment < 0) {
+        alert('Downpayment cannot be negative.');
+        return;
+    }
+
+    if (currentDownpayment > total) {
+        alert('Downpayment cannot be greater than the selected service total.');
+        return;
+    }
+
+    if (currentDownpayment === 0) {
+        document.getElementById('booking-form').submit();
+        return;
+    }
 
     document.getElementById('modal-amount').textContent = '₱' + currentDownpayment.toLocaleString();
     document.getElementById('payment-error').style.display = 'none';
