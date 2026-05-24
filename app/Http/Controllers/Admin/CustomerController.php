@@ -1,0 +1,64 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Controller;
+use App\Models\Customer;
+use Illuminate\Http\Request;
+
+class CustomerController extends Controller
+{
+    public function index(Request $request)
+    {
+        $query = Customer::query();
+
+        $status = strtolower(trim((string) $request->query('status', '')));
+        if (in_array($status, ['active', 'inactive'], true)) {
+            $query->where('is_active', $status === 'active');
+        }
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', '%' . $search . '%')
+                    ->orWhere('email', 'like', '%' . $search . '%');
+            });
+        }
+
+        $customers = $query->paginate(10)->withQueryString();
+        
+        return view('admin.customers.index', compact('customers'));
+    }
+
+    public function show(Customer $customer)
+    {
+        $customer->load('appointments');
+        return view('admin.customers.show', compact('customer'));
+    }
+
+    public function edit(Customer $customer)
+    {
+        return view('admin.customers.edit', compact('customer'));
+    }
+
+    public function update(Request $request, Customer $customer)
+    {
+        $data = $request->validate([
+            'name' => 'required|string|max:100',
+            'email' => 'required|email|unique:customers,email,' . $customer->id,
+            'contact_num' => 'nullable|string|max:20',
+            'is_active' => 'required|boolean',
+        ]);
+
+        $customer->update($data);
+
+        return redirect()->route('admin.customers.show', $customer)->with('success', 'Customer updated successfully.');
+    }
+
+    public function toggleActive(Customer $customer)
+    {
+        $customer->update(['is_active' => !$customer->is_active]);
+        
+        return response()->json(['is_active' => $customer->is_active]);
+    }
+}

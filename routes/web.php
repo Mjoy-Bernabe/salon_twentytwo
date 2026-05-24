@@ -1,6 +1,123 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\HomeController;
+use Illuminate\Support\Facades\File;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\StylistController;
+use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\ContactController;
+use App\Http\Controllers\AppointmentController;
+use App\Http\Controllers\CustomerAuthController;
+use App\Http\Controllers\Admin\AdminAuthController;
+use App\Http\Controllers\Admin\AdminController as AdminDashboardController;
+use App\Http\Controllers\Admin\ServiceController as AdminServiceController;
+use App\Http\Controllers\Admin\StylistController as AdminStylistController;
+use App\Http\Controllers\Admin\AppointmentController as AdminAppointmentController;
 
-Route::get('/', [HomeController::class, 'index'])->name('home');
+/*
+|--------------------------------------------------------------------------
+| Public Pages
+|--------------------------------------------------------------------------
+*/
+Route::get('/', [DashboardController::class, 'index'])->name('home');
+Route::get('/about',   function () { return view('about'); })->name('about');
+Route::get('/gallery', function () {
+    $galleryImages = collect(File::directories(public_path('images')))
+        ->filter(fn ($directory) => preg_match('/img\d+_files$/', str_replace('\\', '/', $directory)))
+        ->flatMap(fn ($directory) => File::files($directory))
+        ->filter(fn ($file) => in_array(strtolower($file->getExtension()), ['jpg', 'jpeg', 'png', 'webp'], true))
+        ->unique(fn ($file) => $file->getFilename())
+        ->sortBy(fn ($file) => $file->getFilename())
+        ->map(fn ($file) => 'images/' . basename($file->getPath()) . '/' . $file->getFilename())
+        ->values();
+
+    return view('gallery', compact('galleryImages'));
+})->name('gallery');
+Route::get('/contact', function () { return view('contact'); })->name('contact');
+Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
+
+/*
+|--------------------------------------------------------------------------
+| Customer Auth (Guest only)
+|--------------------------------------------------------------------------
+*/
+Route::get('/login',     [CustomerAuthController::class, 'showLogin'])->name('customer.login');
+Route::post('/login',    [CustomerAuthController::class, 'login'])->name('customer.login.post');
+Route::get('/register',  [CustomerAuthController::class, 'showRegister'])->name('customer.register');
+Route::post('/register', [CustomerAuthController::class, 'register'])->name('customer.register.post');
+Route::post('/logout',   [CustomerAuthController::class, 'logout'])->name('customer.logout');
+
+// Forgot Password Routes
+Route::get('/forgot-password', [CustomerAuthController::class, 'showForgotPassword'])->name('customer.forgot-password');
+Route::post('/forgot-password', [CustomerAuthController::class, 'sendResetCode'])->name('customer.send-reset-code');
+Route::get('/verify-reset-code', [CustomerAuthController::class, 'showResetPassword'])->name('customer.verify-reset-code');
+Route::post('/verify-reset-code', [CustomerAuthController::class, 'verifyResetCode'])->name('customer.verify-reset-code.post');
+Route::get('/new-password', [CustomerAuthController::class, 'showNewPassword'])->name('customer.new-password');
+Route::post('/new-password', [CustomerAuthController::class, 'resetPassword'])->name('customer.reset-password');
+
+/*
+|--------------------------------------------------------------------------
+| Customer Protected Routes (must be logged in)
+|--------------------------------------------------------------------------
+*/
+Route::middleware('customer.auth')->group(function () {
+    Route::get('/booking',        [AppointmentController::class, 'index'])->name('booking');
+    Route::get('/booknow',        [AppointmentController::class, 'index'])->name('booknow');
+    Route::post('/appointments',  [AppointmentController::class, 'store'])->name('appointments.store');
+    Route::get('/appointments/stylists', [AppointmentController::class, 'getStylistsForService'])->name('appointments.stylists');
+    Route::get('/appointments/schedules', [AppointmentController::class, 'getSchedulesForStylist'])->name('appointments.schedules');
+    Route::get('/my-bookings',    [CustomerAuthController::class, 'history'])->name('customer.history');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Services
+|--------------------------------------------------------------------------
+*/
+Route::resource('services', ServiceController::class);
+
+/*
+|--------------------------------------------------------------------------
+| Stylists
+|--------------------------------------------------------------------------
+*/
+Route::resource('stylists', StylistController::class);
+
+Route::get('/stylists/{id}/schedule',  [StylistController::class, 'schedule'])->name('stylists.schedule');
+Route::post('/stylists/{id}/schedule', [StylistController::class, 'storeSchedule'])->name('stylists.schedule.store');
+
+/*
+|--------------------------------------------------------------------------
+| Customers (Admin)
+|--------------------------------------------------------------------------
+*/
+Route::resource('customers', CustomerController::class);
+
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::get('/login', [AdminAuthController::class, 'showLogin'])->name('login');
+    Route::post('/login', [AdminAuthController::class, 'login'])->name('login.post');
+    Route::post('/logout', [AdminAuthController::class, 'logout'])->name('logout');
+
+    Route::middleware('admin.auth')->group(function () {
+        Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
+
+        Route::resource('services', AdminServiceController::class);
+
+        Route::resource('customers', \App\Http\Controllers\Admin\CustomerController::class);
+        Route::post('customers/{customer}/toggle-active', [\App\Http\Controllers\Admin\CustomerController::class, 'toggleActive'])->name('customers.toggle-active');
+
+        Route::resource('stylists', AdminStylistController::class);
+        Route::get('stylists/{id}/schedule', [AdminStylistController::class, 'schedule'])->name('stylists.schedule');
+        Route::post('stylists/{id}/schedule', [AdminStylistController::class, 'storeSchedule'])->name('stylists.schedule.store');
+        Route::get('stylists-schedule/{id}/edit', [AdminStylistController::class, 'editSchedule'])->name('stylists-schedule.edit');
+        Route::post('stylists-schedule/{id}', [AdminStylistController::class, 'updateSchedule'])->name('stylists-schedule.update');
+        Route::delete('stylists-schedule/{id}', [AdminStylistController::class, 'deleteSchedule'])->name('stylists-schedule.delete');
+
+        Route::get('appointments/receipt-history', [AdminAppointmentController::class, 'receiptHistory'])->name('appointments.receipts');
+        Route::resource('appointments', AdminAppointmentController::class);
+        Route::post('appointments/{appointment}/confirm', [AdminAppointmentController::class, 'confirm'])->name('appointments.confirm');
+        Route::post('appointments/{appointment}/cancel', [AdminAppointmentController::class, 'cancel'])->name('appointments.cancel');
+        Route::post('appointments/{appointment}/done', [AdminAppointmentController::class, 'markDone'])->name('appointments.done');
+    });
+});
