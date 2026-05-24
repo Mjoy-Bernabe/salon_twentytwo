@@ -1,0 +1,95 @@
+# Team Member Contributions
+
+---
+
+## Gonato, Vince Russel H.
+
+### Developed Modules and Features
+
+#### Dashboard
+- Revenue and monthly income monitoring
+- Top stylist analytics
+- Customer and active stylist statistics
+- Operational overview cards
+
+#### Services and Promos Management
+- Add, edit, activate/deactivate, and remove services/promos
+- Search and filter functionality
+- Form and duplicate-entry validation
+
+#### Stylist Management
+- Manage stylist profiles and specializations
+- Assign services offered
+- Create and update weekly schedules
+- Search and availability monitoring
+
+#### Customer Management
+- View and manage customer accounts
+- Enable/disable customer access
+- Search customer records
+- Maintain customer contact information
+
+#### Appointment Management
+- View and filter appointments by status
+- Create, update, confirm, complete, and cancel appointments
+- Monitor appointment operations and schedules
+
+#### Administrative Controls
+- Secure admin authentication and logout
+- Role-based access control
+- Input validation and flash alerts
+- Protection against unauthorized page access
+
+### Contribution Summary
+Handled a significant portion of the Admin Side system development, focusing on management modules, appointment workflows, dashboard analytics, validation processes, and administrative security features to support efficient salon operations.
+
+---
+
+## Bernabe, Maryjoy C.
+
+### Developed Features and Pages
+
+#### Client UI Development
+- Designed and implemented public-facing pages:
+  - Home
+  - About
+  - Services
+  - Gallery
+  - Contact
+  - Authentication pages
+- Maintained consistent layouts, navigation, and responsive design
+- Improved readability, spacing, form alignment, and user interaction feedback
+
+#### Authentication UI
+- Developed Login and Registration page interfaces
+- Added validation messages and user-friendly form behavior
+- Connected frontend authentication forms to backend login and registration handling
+
+#### Forgot Password and Recovery
+- Built Forgot Password, verification, and reset password interfaces
+- Added clear step-by-step recovery flow and validation feedback
+- Integrated email-based password reset functionality
+
+#### Contact Page with Email Integration
+- Implemented Contact page UI and inquiry forms
+- Connected contact submissions to backend email functionality
+- Added success and error feedback messaging
+
+#### Chatbot UI and Assistance
+- Developed chatbot interface for client-side assistance
+- Supported quick-response interactions for common user concerns
+- Integrated chatbot behavior with backend response handling
+
+#### Frontend Quality and Consistency
+- Maintained reusable and consistent UI components across pages
+- Focused on clean structure, accessibility, and user-friendly interactions
+- Prioritized responsive and maintainable frontend implementation
+
+#### Backend Integrations Included
+- Login and registration handling
+- Password recovery and email reset integration
+- Contact form email functionality
+- Chatbot request/response integration
+
+### Contribution Summary
+Handled the majority of the client-side interface development and refinement, including authentication flows, contact communication, password recovery, chatbot interaction, and responsive frontend implementation, while integrating essential backend support for user-facing features.
