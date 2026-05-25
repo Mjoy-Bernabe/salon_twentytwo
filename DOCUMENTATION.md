@@ -8,8 +8,12 @@
 | **Bernabe, Maryjoy C.** | **100/100** | Contributed significantly to the frontend and client-side development of the system. Developed responsive and user-friendly interfaces including authentication pages, contact forms, chatbot UI, and public-facing pages. Demonstrated strong attention to design consistency, usability, and frontend integration with backend services. Maintained clean layouts and improved overall user experience through responsive and accessible implementation. |
 | **Henson, Honeypearl Charisse B.** | **100/100** | Made major contributions to the client booking system and appointment workflows. Successfully implemented booking functionality, payment integration, email notifications, password recovery, and admin confirmation systems. Demonstrated strong technical skills in handling complex appointment scheduling logic, validation, and customer interaction processes. Played an important role in improving both client convenience and administrative workflow efficiency. |
 
-
-
+    HENSON, HONEYPEARL CHARISSE B.
+| Name | Evaluation Score | Description (Justification) |
+|---|---|---|
+| **Gonato, Vince Russel H.** | **100/100** | Demonstrated strong leadership and played a major role in guiding the group toward the successful completion of the project. Worked extensively on the administration flow, system logic, and integration of core functionalities. Managed and implemented important backend processes that ensured smooth communication between different modules of the system. Also contributed to decision-making, troubleshooting, and maintaining the overall stability and functionality of the project throughout the development process. |
+| **Bernabe, Maryjoy C.** | **100/100** | Contributed significantly to the frontend development of the project while also assisting in backend implementation and integration. Responsible for developing and improving the chatbot feature and enhancing the overall user experience through responsive and user-friendly interface designs. Also worked on the login and registration functionalities for users, ensuring accessibility, usability, and smooth interaction between the client-side and backend components of the system. |
+| **Henson, Honeypearl Charisse B.** | **100/100** | Made valuable contributions to the project through the implementation of the appointment booking functionality and related system processes. Worked on the sales history feature on the administration side, helping improve record management and monitoring capabilities of the system. Also contributed to UI/UX improvements by refining layouts, improving usability, and enhancing the overall user interaction and experience within the platform. |
 
 ---
 # Team Member Contributions
