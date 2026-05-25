@@ -508,7 +508,7 @@
     #prev-month:hover, #next-month:hover { background:#f3f4f6 !important; }
 
     /* ── Submit hover ── */
-    button[type="submit"]:hover { background:#222 !important; transform:translateY(-1px); box-shadow:0 12px 40px rgba(0,0,0,0.22) !important; }
+    button[type="submit"]:hover { transform:translateY(-1px); box-shadow:0 12px 40px rgba(0,0,0,0.22) !important; }
 </style>
 
 <script>
