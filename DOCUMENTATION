@@ -51,7 +51,6 @@ Handled a significant portion of the Admin Side system development, focusing on 
 
 #### Client UI Development
 - Designed and implemented public-facing pages:
-  - Home
   - About
   - Services
   - Gallery
@@ -64,11 +63,6 @@ Handled a significant portion of the Admin Side system development, focusing on 
 - Developed Login and Registration page interfaces
 - Added validation messages and user-friendly form behavior
 - Connected frontend authentication forms to backend login and registration handling
-
-#### Forgot Password and Recovery
-- Built Forgot Password, verification, and reset password interfaces
-- Added clear step-by-step recovery flow and validation feedback
-- Integrated email-based password reset functionality
 
 #### Contact Page with Email Integration
 - Implemented Contact page UI and inquiry forms
@@ -87,9 +81,59 @@ Handled a significant portion of the Admin Side system development, focusing on 
 
 #### Backend Integrations Included
 - Login and registration handling
-- Password recovery and email reset integration
 - Contact form email functionality
 - Chatbot request/response integration
 
 ### Contribution Summary
-Handled the majority of the client-side interface development and refinement, including authentication flows, contact communication, password recovery, chatbot interaction, and responsive frontend implementation, while integrating essential backend support for user-facing features.
+Handled the majority of the client-side interface development and refinement, including authentication flows, contact communication, chatbot interaction, and responsive frontend implementation, while integrating essential backend support for user-facing features.
+
+
+---
+
+## Henson, Honeypearl Charisse B.
+
+### Developed Features and Pages
+
+#### Home and Client UI
+
+- Designed and implemented the client-facing home page
+- Maintained consistent styling and layout with the rest of the public-facing interface
+
+#### Client Appointment Booking
+
+- Implemented full booking flow: service selection, stylist assignment, and date & time picking
+- Real-time stylist availability checking and double-booking prevention
+- Step-by-step booking interface with live summary panel
+- Calendar and time slot generation based on stylist schedules
+
+#### Payment and Downpayment System
+
+- Integrated optional downpayment flow during booking
+- Built payment modal with card input and validation
+- Implemented skip option for customers who prefer to pay on the day
+- Passed downpayment amount through to appointment records
+
+#### Admin Appointment Confirmation
+
+- Built confirmation workflow for admin to review and confirm pending bookings
+- Triggered confirmation email to customer upon admin approval
+- Updated appointment status and reflected changes across the admin panel
+
+#### Email Notifications
+
+- Configured and sent booking confirmation emails upon successful appointment creation
+- Implemented cancellation notification emails
+- Built appointment receipt emails for completed bookings showing total, amount paid, and service acquired.
+
+#### Admin Sales History
+
+- Developed completed appointment receipt records for admin reference
+- Structured receipt data including service, stylist, payment breakdown, and completion date
+
+#### Forgot Password and Recovery
+- Built Forgot Password, verification, and reset password interfaces
+- Added clear step-by-step recovery flow and validation feedback
+- Integrated email-based password reset functionality
+
+### Contribution Summary
+Handled the core client booking experience end-to-end, from service and stylist selection through scheduling, payment, and email communication. Also developed admin appointment confirmation workflows, sales history records, forgot password recovery with email code sending, and the client home page interface.
